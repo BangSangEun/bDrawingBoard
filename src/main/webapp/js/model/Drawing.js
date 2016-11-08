@@ -39,7 +39,7 @@ define([], function() {
             return _lineWidth;
         };
 
-        this.setLineWidth = function(_lineWidth) {
+        this.setLineWidth = function(lineWidth) {
             _lineWidth = lineWidth;
         };
 
@@ -47,7 +47,7 @@ define([], function() {
             return _fillStyle;
         };
 
-        this.setType = function(_fillStyle) {
+        this.setFillStyle = function(fillStyle) {
             _fillStyle = fillStyle;
         };
 
