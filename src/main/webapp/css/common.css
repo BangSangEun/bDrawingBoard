@@ -107,7 +107,7 @@ canvas {display: block; border:1px solid #B8B6B8;}
 .paint-ico {background-image: url("../image/icon/paint_ico.png");}
 .eraser-ico {background-image: url("../image/icon/eraser_ico.png");}
 .text-ico {background-image: url("../image/icon/text_ico.png");}
-.selectObj-ico {background-image: url("../image/icon/area_ico.png");}
+.selectDrawing-ico {background-image: url("../image/icon/area_ico.png");}
 
 /* ---------- additional-tool icon */
 .shape_circle-ico {background-image: url("../image/icon/shape_circle.png");}
