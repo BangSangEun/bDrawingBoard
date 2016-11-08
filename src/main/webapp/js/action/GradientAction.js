@@ -119,23 +119,22 @@ define(['jquery', 'Util'],
              * @param gradientData : 그라데이션 데이터
              * @param isBreakPointBar : 그라데이션 옵션 뷰의 중지점 바 여부
              */
-            this.setGradientFillStyle = function(context, gradientData, isBreakPointBar) {
-                var point = gradientData.point;
-                var startBreakPoint = point[0], endBreakPoint = point[point.length - 1];
-                var gradient;
+             this.setGradientFillStyle = function(context, gradientData, isBreakPointBar) {
+                 var startBreakPoint = gradientData[0], endBreakPoint = gradientData[gradientData.length - 1];
+                 var gradient;
 
-                if(isBreakPointBar == 'breakbar' || self.getType() == 'line') { //선형
-                    gradient = context.createLinearGradient(startBreakPoint.x, startBreakPoint.y, endBreakPoint.x, endBreakPoint.y);
-                }else if(self.getType() == 'radial') { //방사형
-                    gradient = context.createRadialGradient(startBreakPoint.x, startBreakPoint.y, startBreakPoint.radius, endBreakPoint.x, endBreakPoint.y, endBreakPoint.radius);
-                }
+                 if(isBreakPointBar == 'breakbar' || self.getType() == 'line') { //선형
+                     gradient = context.createLinearGradient(startBreakPoint.x, startBreakPoint.y, endBreakPoint.x, endBreakPoint.y);
+                 }else if(self.getType() == 'radial') { //방사형
+                     gradient = context.createRadialGradient(startBreakPoint.x, startBreakPoint.y, startBreakPoint.radius, endBreakPoint.x, endBreakPoint.y, endBreakPoint.radius);
+                 }
 
-                $(point).each(function() {
-                    gradient.addColorStop(this.position * 0.01, this.color); //addColorStop의 첫번째 값은 중지점 백분율 값
-                });
+                 $(gradientData).each(function() {
+                     gradient.addColorStop(this.position * 0.01, this.color); //addColorStop의 첫번째 값은 중지점 백분율 값
+                 });
 
-                context.fillStyle = gradient;
-            };
+                 context.fillStyle = gradient;
+             };
 
             /**
              * 각도 값 반환
@@ -277,11 +276,11 @@ define(['jquery', 'Util'],
              * @returns {{point: Array, degree: (*|jQuery)}|*}
              */
             this.getGradientData = function(pointArr) {
-                var gradientData, point = [];
+                var gradientData = [];
                 var breakPoint = $('.breakpoint'); //모든 breakpoint 개체
 
                 $(pointArr).each(function(index, item) {
-                    point[index] = {
+                    gradientData[index] = {
                         x: this.x,
                         y: this.y,
                         color: $(breakPoint[index]).attr('gradient-color'),
@@ -289,11 +288,6 @@ define(['jquery', 'Util'],
                         radius: this.radius
                     };
                 });
-
-                gradientData = {
-                    point: point,
-                    degree: self.getDegree()
-                };
 
                 return gradientData;
             };
@@ -330,7 +324,7 @@ define(['jquery', 'Util'],
                 var canvas = document.getElementById("gradient-breakpoint-bar");
                 var context = canvas.getContext("2d");
 
-                var gradient = self.setGradientFillStyle(context, gradientData, 'breakbar');
+                self.setGradientFillStyle(context, gradientData, 'breakbar');
                 context.fillRect(0,0,100,20);
             };
 
