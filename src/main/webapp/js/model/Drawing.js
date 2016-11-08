@@ -55,7 +55,7 @@ define([], function() {
             return _imageData;
         };
 
-        this.setType = function(imageData) {
+        this.setImageData = function(imageData) {
             _imageData = imageData;
         };
     };
