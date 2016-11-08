@@ -7,8 +7,9 @@ define(['jquery', 'GradientAction', 'Drawing'],
         var drawingAction = function() {
             var self = this;
             var paintOption;
+            var figureData;
+            var lineData;
             var isMouseDown;
-            var tempData; //임시 데이터
             var gradientAction;
             var tool;
 
@@ -160,7 +161,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
              */
             this.drawLineEvent = function(event) {
                 tool.getPen().setNewPoint(event);
-
                 tool.getContext().lineWidth = tool.getPen().getSize(); //라인 굵기
                 tool.getContext().strokeStyle = tool.getPen().getColor(); //라인 색상
                 tool.getContext().lineCap = tool.getPen().getBrush(); //끝 부분 모양 (round, butt, square 가 있음)
@@ -169,6 +169,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 tool.getContext().moveTo(tool.getPen().getOldPoint().x, tool.getPen().getOldPoint().y);
                 tool.getContext().lineTo(tool.getPen().getNewPoint().x, tool.getPen().getNewPoint().y);
                 tool.getContext().stroke();
+                lineData.push({oldPoint: $.extend({}, tool.getPen().getOldPoint()), newPoint: $.extend({}, tool.getPen().getNewPoint())});
 
                 tool.getPen().setOldPoint(null, tool.getPen().getNewPoint());
             };
@@ -229,19 +230,8 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 tool.getContext().closePath();
                 tool.getContext().stroke();
 
-                //도형 개체
-                /*
-                var figureData = {
-                    figureType : figureType,    //도형 타입
-                    coordinate : {x: oldX, y: oldY},    //도형 좌표
-                    figureSize: figureSize, //도형 크기
-                    strokeStyle : tool.getContext().strokeStyle,    //라인 색상
-                    lineWidth : tool.getContext().lineWidth,    //라인 굵기
-                    fillStyle : tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle,   //채우기 색상
-                    imageData: tool.getPen().getImageData()
-                };
-                */
-                var figureData = new Drawing();
+                //개체 임시저장 - 도형 개체
+                figureData = new Drawing();
                 figureData.setType('figure');
                 figureData.setData({
                     figureType : figureType,    //도형 타입
@@ -255,9 +245,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 figureData.setLineWidth(tool.getContext().lineWidth);
                 figureData.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
                 figureData.setImageData(tool.getPen().getImageData());
-
-                //개체 임시 저장
-                tempData = figureData;
 
                 return figureData;
             };
@@ -285,81 +272,115 @@ define(['jquery', 'GradientAction', 'Drawing'],
              */
             this.paintEvent = function(event) {
                 //개체 선택
-                self.selectDrawingEvent(event);
-                var obj = tempData;
+                var obj = self.selectDrawingEvent(event);
 
                 //개체선택 해제
                 self.prevCanvasReturn();
 
-                if(obj.selectDrawing != undefined) {
+                if(obj != undefined) {
                     if(paintOption == 'gradient') {
-                        var gradientData = gradientAction.getTypeGradientData(obj.selectDrawing.getData().coordinate, obj.selectDrawing.getData().figureSize);
-                        gradientAction.setGradientFillStyle(tool.getContext(), gradientData, obj.selectDrawing);
-                        obj.selectDrawing.setFillStyle(tool.getContext().fillStyle);
+                        var gradientData = gradientAction.getTypeGradientData(obj.drawing.getData().coordinate, obj.drawing.getData().figureSize);
+                        gradientAction.setGradientFillStyle(tool.getContext(), gradientData, obj.drawing);
+                        obj.drawing.setFillStyle(tool.getContext().fillStyle);
                     }
 
-                    var figureData = self.drawFigureEvent(null, obj.selectDrawing);
+                    figureData = self.drawFigureEvent(null, obj.drawing);
                     tool.getData()[obj.index] = figureData;
                     tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                 }
             };
 
             /**
-             * 개체 선택 - (도형)
+             * 개체 선택
              * @param event
+             * @returns {*} : selectDrawing 객체 반환 (canvas 내 객체정보 배열의 index 정보 포함)
              */
             this.selectDrawingEvent = function(event) {
                 tool.getPen().setNewPoint(event);
                 var x = tool.getPen().getNewPoint().x, y = tool.getPen().getNewPoint().y;
-                var leftTopX, leftTopY, leftBottomX, leftBottomY, rightTopX, rightTopY, rightBottomX, rightBottomY;
-                var figureX, figureY;
-                var inObj = false;
+                var leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
+                var selectDrawing, inDrawing = false;
 
                 var dataArr = tool.getData().slice();
                 //거꾸로 순회해서 if 문에서 먼저 인식된 도형 찾으면 종료
                 $(dataArr.reverse()).each(function(index, data) {
-                    if(data.getType() == 'figure') {
-                        figureX = data.getData().coordinate.x, figureY = data.getData().coordinate.y;
+                    if(data.getType() == 'pencil' || data.getType() == 'brush') {
+                        var arrPoint = data.getData();
+                        var minStartPoint = {}, maxEndPoint = {};
+                        minStartPoint.x = arrPoint[0].oldPoint.x, minStartPoint.y = arrPoint[0].oldPoint.y;
+                        maxEndPoint.x = arrPoint[0].oldPoint.x, maxEndPoint.y = arrPoint[0].oldPoint.y;
+                        for(var i=0; i<arrPoint.length-2; i++) {
+                            if(arrPoint[i+1].oldPoint.x < minStartPoint.x) {
+                                minStartPoint.x = arrPoint[i+1].oldPoint.x;
+                            }
+                            if(arrPoint[i+1].oldPoint.y < minStartPoint.y) {
+                                minStartPoint.y = arrPoint[i+1].oldPoint.y;
+                            }
+                            if(maxEndPoint.x < arrPoint[i+1].oldPoint.x) {
+                                maxEndPoint.x = arrPoint[i+1].oldPoint.x;
+                            }
+                            if(maxEndPoint.y < arrPoint[i+1].oldPoint.y) {
+                                maxEndPoint.y = arrPoint[i+1].oldPoint.y;
+                            }
+                            if(i == arrPoint.length-2) {
+                                if(arrPoint[arrPoint.length-2].newPoint.x < minStartPoint.x) {
+                                    minStartPoint.x = arrPoint[arrPoint.length-2].newPoint.x;
+                                }else if(maxEndPoint.x < arrPoint[arrPoint.length-2].newPoint.x) {
+                                    maxEndPoint.x = arrPoint[arrPoint.length-2].newPoint.x;
+                                }
 
+                                if(arrPoint[arrPoint.length-2].newPoint.y < minStartPoint.y) {
+                                    minStartPoint.y = arrPoint[arrPoint.length-2].newPoint.y;
+                                }else if(maxEndPoint.y < arrPoint[arrPoint.length-2].newPoint.y) {
+                                    maxEndPoint.y = arrPoint[arrPoint.length-2].newPoint.y;
+                                }
+                            }
+                        }
+
+                        leftTop.x = minStartPoint.x - data.getLineWidth(), leftTop.y = minStartPoint.y - data.getLineWidth(),
+                        leftBottom.x = minStartPoint.x - data.getLineWidth(), leftBottom.y = maxEndPoint.y + data.getLineWidth(),
+                        rightTop.x = maxEndPoint.x + data.getLineWidth(), rightTop.y = minStartPoint.y - data.getLineWidth(),
+                        rightBottom.x = maxEndPoint.x + data.getLineWidth(), rightBottom.y = maxEndPoint.y + data.getLineWidth();
+                    }else if(data.getType() == 'figure') {
+                        var figureX = data.getData().coordinate.x, figureY = data.getData().coordinate.y;
                         var figureSize = data.getData().figureType == 'square'? data.getData().figureSize/2 + (data.getLineWidth()/2 + 1) : data.getData().figureSize + (data.getLineWidth()/2 + 1);
 
-                        leftTopX = figureX - figureSize, leftTopY = figureY - figureSize,
-                        leftBottomX = figureX - figureSize, leftBottomY = figureY + figureSize,
-                        rightTopX = figureX + figureSize, rightTopY = figureY - figureSize,
-                        rightBottomX = figureX + figureSize, rightBottomY = figureY + figureSize;
+                        leftTop.x = figureX - figureSize, leftTop.y = figureY - figureSize,
+                        leftBottom.x = figureX - figureSize, leftBottom.y = figureY + figureSize,
+                        rightTop.x = figureX + figureSize, rightTop.y = figureY - figureSize,
+                        rightBottom.x = figureX + figureSize, rightBottom.y = figureY + figureSize;
+                    }
 
-                        //사각 프레임 영역으로 도형 인식
-                        if(leftTopX <= x && x <= rightTopX
-                            && leftTopY <= y && y <= leftBottomY) {
-                            inObj = true;
-                            tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
-                            tool.getContext().putImageData(tool.getPen().getImageData(), 0, 0);
+                    //사각 프레임 영역으로 도형 인식
+                    if(leftTop.x <= x && x <= rightTop.x
+                        && leftTop.y <= y && y <= leftBottom.y) {
+                        inDrawing = true;
 
-                            tool.getContext().beginPath();
-                            tool.getContext().setLineDash([4, 3]);
-                            tool.getContext().moveTo(leftTopX, leftTopY);
-                            tool.getContext().lineTo(leftBottomX, leftBottomY);
-                            tool.getContext().lineTo(rightBottomX, rightBottomY);
-                            tool.getContext().lineTo(rightTopX, rightTopY);
-                            tool.getContext().closePath();
-                            tool.getContext().lineWidth = '1'; //라인 굵기
-                            tool.getContext().strokeStyle = '#333333'; //라인 색상
-                            tool.getContext().stroke();
-
-                            //개체 임시 저장
-                            tempData = {
-                                selectDrawing : data,
-                                index : dataArr.length - 1 - index
-                            };
-                            return false;
-                        }
+                        tool.getContext().beginPath();
+                        tool.getContext().setLineDash([4, 3]);
+                        tool.getContext().moveTo(leftTop.x, leftTop.y);
+                        tool.getContext().lineTo(leftBottom.x, leftBottom.y);
+                        tool.getContext().lineTo(rightBottom.x, rightBottom.y);
+                        tool.getContext().lineTo(rightTop.x, rightTop.y);
+                        tool.getContext().closePath();
+                        tool.getContext().lineWidth = '1'; //라인 굵기
+                        tool.getContext().strokeStyle = '#333333'; //라인 색상
+                        tool.getContext().stroke();
+                        
+                        selectDrawing = {
+                            drawing : data,
+                            index : dataArr.length - 1 - index
+                        };
+                        return false;
                     }
                 });
 
-                if(!inObj) {
+                if(!inDrawing) {
                     //개체선택 해제
                     self.prevCanvasReturn();
                 }
+
+                return selectDrawing;
             };
 
             /**
@@ -384,8 +405,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             case 'pencil' :
                             case 'brush' :
                             case 'eraser' :
-                                tool.getPen().setOldPoint(event);
-                                break;
+                                lineData = [];
                             case 'figure' :
                                 tool.getPen().setOldPoint(event);
                                 tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
@@ -394,19 +414,36 @@ define(['jquery', 'GradientAction', 'Drawing'],
                                 self.paintEvent(event);
                                 break;
                             case 'selectDrawing' :
+                                //개체선택 해제
+                                self.prevCanvasReturn();
                                 self.selectDrawingEvent(event);
                                 break;
                         }
                     }
                 } else if (event.type == 'mouseup') {
                     isMouseDown = false;
-                    if(tool.getCurrent() == 'figure') {
-                        //도형 개체 저장
-                        tool.getData().push(tempData);
+                    if(tool.getCurrent() == 'pencil' || tool.getCurrent() == 'brush') {
+                        //선 개체
+                        var drawing = new Drawing();
+                        drawing.setType(tool.getCurrent());
+                        drawing.setData(lineData);
+                        drawing.setStrokeStyle(tool.getContext().strokeStyle);
+                        drawing.setLineWidth(tool.getContext().lineWidth);
+                        drawing.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
+                        drawing.setImageData(tool.getPen().getImageData());
+
+                        //개체 저장
+                        tool.getData().push(drawing);
+                    }else if(tool.getCurrent() == 'figure') {
+                        //개체 저장
+                        tool.getData().push(figureData);
                     }
+
                     if(tool.getCurrent() != 'selectDrawing' && tool.getCurrent() != 'paint') {
                         tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                     }
+
+                    console.log(tool.getData());
                 } else if (event.type == 'mouseover') {
                     isMouseDown = false;
                 } else if (event.type == 'mousemove') {
