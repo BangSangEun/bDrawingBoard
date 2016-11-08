@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-select.css"/>
+    <script data-main="js/main.js" src="/js/lib/require.js"></script>
+
+    <script type="text/javascript"></script>
+
+    <title>Drawing Board</title>
+</head>
+<body>
+<header id="top-panel">
+    <div class="navi-top">
+        <ul class="navi-top-left"></ul>
+        <ul class="navi-top-right">
+            <li><span id="top-memberInfo"></span>님 안녕하세요.</li>
+            <li><span class="li-menu btn-logout">로그아웃</span></li>
+        </ul>
+    </div>
+    <div class="logo">
+        <div class="logobox">
+            <a href="/main.do">Drawing Board</a>
+        </div>
+    </div>
+    <div class="navi-menu">
+        <ul class="navi-menu-left">
+            <li id="menu-saveLocal">
+                <i class="tool-ico savelocal-ico"></i> 다운로드
+            </li>
+            <li id="menu-saveFile">
+                <i class="tool-ico savefile-ico"></i> 저장
+            </li>
+            <li id="menu-drawClear">
+                <i class="tool-ico drawclear-ico"></i> 새로그리기
+            </li>
+        </ul>
+        <ul class="navi-menu-right">
+            <li id="menu-myFileList">
+                <i class="tool-ico myfolder-ico"></i> 내 파일목록
+            </li>
+        </ul>
+    </div>
+
+    <!-- 내 파일 목록 뷰 -->
+    <div class="modal fade file-view" id="myfile-list" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">내 파일 목록</h4>
+                </div>
+                <!-- body -->
+                <div class="modal-body">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr class="list-root">
+                                <td><i class="tool-ico myfolder-black-ico"></i> /</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="div-list-file">
+                        <table class="table table-striped">
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default file-btn-close" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 내 파일 저장 뷰 -->
+    <div class="modal fade" id="myfile-save" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <!-- header -->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">내 파일 저장</h4>
+                </div>
+                <!-- body -->
+                <div class="modal-body">
+                    <input type="text" class="form-control" id="filesave-name" placeholder="파일명을 입력하세요."/>
+                </div>
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary" id="myfile-save-btn">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</header>
+<secssion id="content-panel">
+    <!-- 그림 도구 -->
+    <div class="drawing-tool">
+        <ul>
+            <li>
+                <button type="button" class="btn btn-default" id="tool-pencil">
+                    <i class="tool-ico pencil-ico"></i> 연필
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" id="tool-brush">
+                    <i class="tool-ico brush-ico"></i> 브러시
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" id="tool-figure">
+                    <i class="tool-ico figure-ico"></i> 도형
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" id="tool-paint">
+                    <i class="tool-ico paint-ico"></i> 채우기
+                </button>
+            </li>
+            <li>
+                <button type="button" class="btn btn-default" id="tool-eraser">
+                    <i class="tool-ico eraser-ico"></i> 지우개
+                </button>
+            </li>
+            <!--
+            <li>
+                <button type="button" class="btn btn-default" id="tool-text" disabled="disabled">
+                    <i class="tool-ico text-ico"></i> 텍스트
+                </button>
+            </li>
+            -->
+            <li>
+                <button type="button" class="btn btn-default" id="tool-selectObj">
+                    <i class="tool-ico selectObj-ico"></i> 개체선택
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="drawing-board">
+        <canvas id="drawing-canvas" download="drawing-img"></canvas>
+    </div>
+</secssion>
+<footer id="footer-panel">
+    <div class="navi-footer">
+        <div class="pallet-left">
+            <div class="pallet-left additional-tool">
+                <div id="add-brush-tool">
+
+                    <div id="brush-shape" style="display:none;">
+                        <select class="selectpicker">
+                            <option data-content="<i class='brush-size-ico pencil-20-ico'></i>" value="round"></option>
+                            <option data-content="<i class='brush-size-ico brush-squre-ico'></i>" value="square"></option>
+                        </select>
+                    </div>
+
+                    <div id="figure-shape" style="display:none;">
+                        <select class="selectpicker">
+                            <option data-content="<i class='tool-ico shape_circle-ico'></i> 원" value="circle"></option>
+                            <option data-content="<i class='tool-ico shape_triangle-ico'></i> 세모" value="triangle"></option>
+                            <option data-content="<i class='tool-ico shape_square-ico'></i> 네모" value="square"></option>
+                        </select>
+                    </div>
+
+                    <div id="paint-option" style="display:none;">
+                        <select class="selectpicker">
+                            <option data-tokens="single">단색</option>
+                            <option data-tokens="gradient">그라데이션</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="pallet-right">
+                <div class="penSize-pallet" id="default-penSize">
+                    <select class="selectpicker">
+                        <option data-content="<i class='pen-size-ico pencil-1-ico'></i>" value="1"></option>
+                        <option data-content="<i class='pen-size-ico pencil-2-ico'></i>" value="2"></option>
+                        <option data-content="<i class='pen-size-ico pencil-3-ico'></i>" value="3"></option>
+                        <option data-content="<i class='pen-size-ico pencil-4-ico'></i>" value="4"></option>
+                    </select>
+                </div>
+                <div class="penSize-pallet" id="brush-penSize" style="display:none;">
+                    <select class="selectpicker">
+                        <option data-content="<i class='brush-size-ico pencil-5-ico'></i>" value="5"></option>
+                        <option data-content="<i class='brush-size-ico pencil-10-ico'></i>" value="10"></option>
+                        <option data-content="<i class='brush-size-ico pencil-15-ico'></i>" value="15"></option>
+                        <option data-content="<i class='brush-size-ico pencil-20-ico'></i>" value="20"></option>
+                    </select>
+                </div>
+                <div class="penSize-pallet" id="eraser-penSize" style="display:none;">
+                    <select class="selectpicker">
+                        <option data-content="<span class='label label-success'>10</span>" value="10"></option>
+                        <option data-content="<span class='label label-success'>15</span>" value="15"></option>
+                        <option data-content="<span class='label label-success'>20</span>" value="20"></option>
+                    </select>
+                </div>
+                <div class="penSize-pallet" id="figure-penSize" style="display:none;">
+                    <select class="selectpicker">
+                        <option data-content="<i class='pen-size-ico pencil-1-ico'></i>" value="1"></option>
+                        <option data-content="<i class='brush-size-ico pencil-5-ico'></i>" value="5"></option>
+                        <option data-content="<i class='brush-size-ico pencil-10-ico'></i>" value="10"></option>
+                    </select>
+                </div>
+                <div class="option-pallet" id="gradient-option" style="display: none;">
+                    <button type="button" class="btn btn-warning">
+                        옵션 설정
+                    </button>
+
+                    <div id="gradient-option-view" style="display: none;">
+                        <div class="popover top">
+                            <div class="arrow"></div>
+                            <button type="button" class="close"><span aria-hidden="true">&times;</span></button>
+                            <h3 class="popover-title">그라데이션 채우기</h3>
+                            <div class="popover-content">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4" for="gradient-type">종류</label>
+                                        <div class="col-xs-6">
+                                            <div id="gradient-type">
+                                                <select class="selectpicker form-control">
+                                                    <option data-tokens="line">선형</option>
+                                                    <option data-tokens="radial">방사형</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4" for="gradient-direction">방향</label>
+                                        <div class="col-xs-6">
+                                            <div id="gradient-direction">
+                                                <div id="line-direction">
+                                                    <select class="selectpicker form-control">
+                                                        <option data-content="<i class='tool-ico arrow_right-ico'></i><font size='2'>왼쪽에서 오른쪽으로</font>" data-tokens="0">왼쪽에서 오른쪽으로</option>
+                                                        <option data-content="<i class='tool-ico arrow_down_right-ico'></i><font size='2'>왼쪽 위에서 오른쪽 아래로</font>" data-tokens="45">왼쪽 위에서 오른쪽 아래로</option>
+                                                        <option data-content="<i class='tool-ico arrow_up_right-ico'></i><font size='2'>왼쪽 아래에서 오른쪽 위로</font>" data-tokens="315">왼쪽 아래에서 오른쪽 위로</option>
+                                                        <option data-content="<i class='tool-ico arrow_down-ico'></i><font size='2'>위에서 아래로</font>" data-tokens="90">위에서 아래로</option>
+                                                        <option data-content="<i class='tool-ico arrow_left-ico'></i><font size='2'>오른쪽에서 왼쪽으로</font>" data-tokens="180">오른쪽에서 왼쪽으로</option>
+                                                        <option data-content="<i class='tool-ico arrow_down_left-ico'></i><font size='2'>오른쪽 위에서 왼쪽 아래로</font>" data-tokens="135">오른쪽 위에서 왼쪽 아래로</option>
+                                                        <option data-content="<i class='tool-ico arrow_up_left-ico'></i><font size='2'>오른쪽 아래에서 왼쪽 위로</font>" data-tokens="225">오른쪽 아래에서 왼쪽 위로</option>
+                                                        <option data-content="<i class='tool-ico arrow_up-ico'></i><font size='2'>아래에서 위로</font>" data-tokens="270">아래에서 위로</option>
+                                                    </select>
+                                                </div>
+
+                                                <div id="radial-direction" style="display: none;">
+                                                    <select class="selectpicker form-control">
+                                                        <option data-content="<font size='2'>가운데에서</font>" data-tokens="0">가운데에서</option>
+                                                        <option data-content="<i class='tool-ico arrow_down_left-ico'></i><font size='2'>왼쪽 위 모서리에서</font>" data-tokens="45">왼쪽 위 모서리에서</option>
+                                                        <option data-content="<i class='tool-ico arrow_down_right-ico'></i><font size='2'>오른쪽 위 모서리에서</font>" data-tokens="135">오른쪽 위 모서리에서</option>
+                                                        <option data-content="<i class='tool-ico arrow_up_left-ico'></i><font size='2'>오른쪽 아래 모서리에서</font>" data-tokens="225">오른쪽 아래 모서리에서</option>
+                                                        <option data-content="<i class='tool-ico arrow_up_right-ico'></i><font size='2'>왼쪽 아래 모서리에서</font>" data-tokens="315">왼쪽 아래 모서리에서</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4" for="gradient-degree">각도</label>
+                                        <div class="col-xs-6">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="gradient-degree" placeholder="각도" value="0">
+                                                <div class="input-group-addon">°</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4" for="gradient-breakpoint">중지점</label>
+                                        <div class="col-xs-6">
+                                            <div id="gradient-breakpoint">
+                                                <canvas id="gradient-breakpoint-bar" width="100" height="20"></canvas>
+                                                <div id="breakpoint">
+                                                    <div class="breakpoint-area"></div>
+                                                    <div class="breakpoint" id="breakpoint-1"><i class="breakpoint-ico off"></i></div>
+                                                    <div class="breakpoint" id="breakpoint-2"><i class="breakpoint-ico off"></i></div>
+                                                </div>
+                                            </div>
+                                            <!--
+                                            <div class="form-inline">
+                                                <button type="button" class="btn btn-info btn-xs">추가</button>
+                                                <button type="button" class="btn btn-danger btn-xs">삭제</button>
+                                            </div>
+                                            -->
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4" for="gradient-color">색</label>
+                                        <div class="col-xs-6">
+                                            <button type="button" class="btn btn-default" id="gradient-color"><p></p></button>
+                                            <div class="gradient-color-pallet" style="display: none;">
+                                                <div class="popover down">
+                                                    <button type="button" class="close"><span aria-hidden="true">&times;</span></button>
+                                                    <h3 class="popover-title">색상표</h3>
+                                                    <div class="popover-content"></div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-xs-4" for="gradient-position">위치</label>
+                                        <div class="col-xs-6">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="gradient-position" placeholder="위치" value="0" readonly>
+                                                <div class="input-group-addon">%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="pallet-right">
+            <div class="color-pallet"></div>
+        </div>
+
+        <div class="footer-bottom">
+            @Copyright Bang Sang-eun all right reserved.
+        </div>
+    </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="bDrawingBoard.module.login.dao.LoginDAO">
+
+	<select id="getMemberInfoCheck" parameterType="MemberVO" resultType="Integer">
+		/* 로그인 정보 확인 */
+		SELECT	COUNT(*)
+		FROM	bDrawingBoard.member
+		WHERE	use_yn = 'Y'
+		AND 	member_id = #{member_id}
+		AND		member_pw = #{member_pw}
+	</select>
+
+	<select id="getMemberInfo" parameterType="MemberVO" resultType="MemberVO">
+		/* 회원 정보 조회 */
+		SELECT	member_id
+				,member_name
+				,member_email
+		FROM	bDrawingBoard.member
+		WHERE	use_yn = 'Y'
+		AND 	member_id = #{member_id}
+	</select>
+</mapper>

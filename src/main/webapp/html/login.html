@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="/css/common.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-theme.css"/>
+    <script data-main="js/main.js" src="/js/lib/require.js"></script>
+    <title>Welcome Page</title>
+</head>
+<body class="loginView">
+<section id="content-panel">
+    <div id="index-center-box">
+        <p>Welcome</p>
+        <p>Drawing Board!</p>
+
+        <div id="login-box">
+            <form class="form-horizontal" id="loginForm" action="/goLogin.do" method="POST">
+                <div class="form-group form-group-lg">
+                    <label class="col-sm-3 control-label">ID</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="loginId" name="member_id" placeholder="ID">
+                    </div>
+                </div>
+                <div class="form-group form-group-lg">
+                    <label class="col-sm-3 control-label">Password</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="loginPw" name="member_pw" placeholder="Password">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" id="saveId" name="saveId"> 아이디 저장
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-sm-offset-3 col-sm-4">
+                        <button class="btn btn-default btn-lg btn-block login-btn btn-login">로그인</button>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn btn-default btn-lg btn-block login-btn btn-join">회원가입</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

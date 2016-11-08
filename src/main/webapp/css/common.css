@@ -1,0 +1,177 @@
+/* 전체 스타일 CSS */
+@charset "utf-8";
+
+body {width: 1100px; margin: 0 auto !important; padding: 0 !important; }
+a {text-decoration: none !important;}
+
+
+/* ------------------------------------------------------------------ top-panel */
+#top-panel {position: relative;}
+
+#top-panel .logo {height: 150px; margin: 5px auto; background-color: #45B3AF;}
+#top-panel .logo a {font-weight: bold; font-size: 35pt; color: #45B3AF;}
+#top-panel .logobox { text-align: center; position: relative; display: block; margin: 0 auto; width: 750px; background: #fff; box-shadow: 7px 7px 0px 0px #C0E5E4; border-radius: 20px; padding: 10px; top: 30px; }
+#top-panel .navi-top {height:30px; background-color: #DCDCDC; }
+
+#top-panel ul {position: absolute; list-style: none; padding: 0px; margin: 0 10px;}
+#top-panel .navi-top ul {line-height: 30px;}
+#top-panel .navi-top ul li {display: inline-block; text-align: center; color: #333333; font-size: 10pt; font-weight: bold; margin-left: 10px;}
+#top-panel .navi-top ul li .li-menu {cursor: pointer; color: #45B3AF;}
+#top-panel .navi-top ul.navi-top-left {float: left;}
+#top-panel .navi-top ul.navi-top-right {right: 10px; }
+
+#top-panel .navi-menu {height: 40px; background-color: #C0E5E4; color: #45B3AF;}
+#top-panel .navi-menu ul {line-height: 40px;}
+#top-panel .navi-menu ul li {display: inline-block; text-align: center; font-weight: bold; vertical-align: bottom; margin: 0 10px; font-size: 10pt; font-color: #333333; cursor: pointer;}
+#top-panel .navi-menu ul li:hover {color: #fff; opacity:0.6}
+
+#top-panel .navi-menu ul.navi-menu-left {float: left;}
+#top-panel .navi-menu ul.navi-menu-right {right: 0; }
+
+/* ------------------------------------------------------------------ content-panel */
+#content-panel {clear:both; }
+#content-panel .drawing-board {width: 100%; height: 580px; position:relative; float:right;}
+
+/* ---------- drawing-tool */
+#content-panel .drawing-tool {height: 60px;}
+#content-panel .drawing-tool ul {list-style: none; padding: 0; margin: 0; line-height: 60px;}
+
+#content-panel .drawing-tool ul li {display: inline-block; margin-left: 10px;}
+#content-panel .drawing-tool ul li button {font-size: 12px !important;}
+
+/* ------------------------------------------------------------------ footer-panel */
+#footer-panel {clear:both;}
+#footer-panel .navi-footer {position: relative; height: 100px; }
+
+#footer-panel .navi-footer .pallet-left {width: 50%; float: left;}
+#footer-panel .navi-footer .pallet-right {width: 50%; float: right;}
+
+/* ---------- additional-tool */
+#footer-panel .navi-footer .additional-tool {height: 70px;}
+
+/* ---------- add-brush-tool */
+#footer-panel .navi-footer .additional-tool #add-brush-tool {line-height: 70px;}
+
+/* ---------- gradient-option */
+#gradient-option {line-height: 70px;}
+#gradient-option-view {margin-top: -410px; margin-left: -85px; width: 250px !important;}
+#gradient-option-view .popover {position: relative; display: block; max-width: 250px !important;}
+#gradient-option-view .popover-title {font-weight: bold;}
+#gradient-option-view button.close {padding: 5px 10px !important;}
+
+#gradient-option-view canvas#gradient-breakpoint-bar {margin-top: 7px;}
+#gradient-option-view .breakpoint-area {position: absolute; width: 130px; height: 15px; margin-top: -5px; margin-left: -15px;}
+#gradient-option-view .breakpoint {position: absolute; top: 26px; margin-left: 8px; width: 10px; height: 15px;}
+
+#gradient-option-view #gradient-color p {margin: 0 -5px; width: 50px; height: 20px; border: 1px solid #fff; }
+#gradient-option-view .gradient-color-pallet {position: absolute; width: 212px; z-index: 100;}
+#gradient-option-view .gradient-color-pallet .popover {margin-top: 3px;}
+#gradient-option-view .gradient-color-pallet .popover-content {height: 77px; background-color: #DCDCDC;}
+#gradient-option-view .gradient-color-pallet ul {list-style: none; padding: 0;}
+#gradient-option-view .gradient-color-pallet ul li {display: inline-block; padding: 0; margin: 5px 5px; width: 20px; height: 20px; float:left; border: 1px solid #fff; font-weight: bold; background-color: #333333; cursor: pointer;}
+#gradient-option-view .gradient-color-pallet ul li:hover {opacity:0.8 !important; color: #fff !important;}
+#gradient-option-view .gradient-color-pallet ul li:active {opacity:0.4 !important; color: #fff !important;}
+#gradient-option-view .gradient-color-pallet ul li.on {border: 2px solid #fff !important; margin: 3px 5px 7px 4px !important; box-shadow: 2px 2px 3px 0px #333 !important;}
+
+/* ---------- color-pallet */
+#footer-panel .navi-footer .color-pallet {height: 70px; background-color: #DCDCDC;}
+#footer-panel .navi-footer .color-pallet ul {list-style: none; padding-top: 15px; margin: 0 0 0 25px; }
+#footer-panel .navi-footer .color-pallet ul li {display: inline-block; padding: 0; margin: 10px 5px; width: 20px; height: 20px; float:left; border: 1px solid #fff; font-weight: bold; background-color: #333333; cursor: pointer;}
+#footer-panel .navi-footer .color-pallet ul li:hover {opacity:0.8 !important; color: #fff !important;}
+#footer-panel .navi-footer .color-pallet ul li:active {opacity:0.4 !important; color: #fff !important;}
+#footer-panel .navi-footer .color-pallet ul li.on {border: 2px solid #fff !important; margin: 8px 6px 8px 7px !important; box-shadow: 2px 2px 3px 0px #333 !important;}
+
+/* ---------- penSize-pallet */
+#footer-panel .navi-footer .penSize-pallet {line-height: 70px; }
+
+#footer-panel .navi-footer .footer-bottom {float:right; font-size: 10pt; padding-top: 5px; font-color: #333333;}
+
+/* ------------------------------------------------------------------ canvas */
+canvas {display: block; border:1px solid #B8B6B8;}
+
+/* ------------------------------------------------------------------ login */
+
+#index-center-box {position: absolute; width: 800px; height: 500px; left: 50%; top: 40%; margin-left: -400px; margin-top: -200px;}
+#index-center-box > p {margin: 0; text-align: center; font-size: 60pt; font-weight: bold; color: #45B3AF;}
+
+.loginView {background-color: #DCDCDC}
+#login-box {position: absolute; left: 25%; top: 50%; width: 400px; height: 150px; color: #45B3AF;}
+
+/* ------------------------------------------------------------------ icon */
+/* ----------- tool icon */
+.tool-ico {display: inline-block; background-repeat: no-repeat; margin-bottom: -3px; width: 18px; height: 18px; background-size: 18px 18px; margin-right: 5px;}
+
+.pencil-ico {background-image: url("../image/icon/pencil_ico.png"); }
+.brush-ico {background-image: url("../image/icon/brush_ico.png");}
+.figure-ico {background-image: url("../image/icon/figure_ico.png");}
+.paint-ico {background-image: url("../image/icon/paint_ico.png");}
+.eraser-ico {background-image: url("../image/icon/eraser_ico.png");}
+.text-ico {background-image: url("../image/icon/text_ico.png");}
+.selectObj-ico {background-image: url("../image/icon/area_ico.png");}
+
+/* ---------- additional-tool icon */
+.shape_circle-ico {background-image: url("../image/icon/shape_circle.png");}
+.shape_square-ico {background-image: url("../image/icon/shape_square.png");}
+.shape_triangle-ico {background-image: url("../image/icon/shape_triangle.png");}
+
+.pen-size-ico {display: inline-block; background-repeat: no-repeat; width: 170px; height: 20px; background-size: 170px 10px; margin-top: 16px;}
+.pencil-1-ico {background-image: url("../image/icon/tool-ico/pencil-1.ico");}
+.pencil-2-ico {background-image: url("../image/icon/tool-ico/pencil-2.ico");}
+.pencil-3-ico {background-image: url("../image/icon/tool-ico/pencil-3.ico");}
+.pencil-4-ico {background-image: url("../image/icon/tool-ico/pencil-4.ico");}
+
+.brush-size-ico {display: inline-block; background-repeat: no-repeat; width: 170px; height: 30px; background-size: 170px 30px; margin-top: 6px;}
+.pencil-5-ico {background-image: url("../image/icon/tool-ico/pencil-5.ico");}
+.pencil-10-ico {background-image: url("../image/icon/tool-ico/pencil-10.ico");}
+.pencil-15-ico {background-image: url("../image/icon/tool-ico/pencil-15.ico");}
+.pencil-20-ico {background-image: url("../image/icon/tool-ico/pencil-20.ico");}
+
+.brush-squre-ico {background-image: url("../image/icon/tool-ico/brush-squre.ico");}
+
+
+/* ----------- menu icon */
+.savelocal-ico {background-image: url("../image/icon/download_white_ico.png");}
+.savefile-ico {background-image: url("../image/icon/save_ico.png");}
+.drawclear-ico {background-image: url("../image/icon/delete_white_ico.png");}
+.myfolder-ico {background-image: url("../image/icon/menu_white_ico.png");}
+
+.myfolder-black-ico {background-image: url("../image/icon/folder_black_ico.png");}
+.myfile-ico {background-image: url("../image/icon/file_2_ico.png");}
+.editname-ico {background-image: url("../image/icon/note_pen_ico.png");}
+.savelocal-black-ico {background-image: url("../image/icon/download_black_ico.png");}
+.drawclear-black-ico {background-image: url("../image/icon/delete_black_ico.png");}
+
+.exit-ico {background-image: url("../image/icon/cross_ico.png"); width: 20px !important; height: 20px !important; background-size: 20px 20px !important; cursor: pointer;}
+
+/* ---------- gradient icon */
+.arrow_up-ico {background-image: url("../image/icon/arrow_up.png");}
+.arrow_down-ico {background-image: url("../image/icon/arrow_down.png");}
+.arrow_left-ico {background-image: url("../image/icon/arrow_left.png");}
+.arrow_right-ico {background-image: url("../image/icon/arrow_right.png");}
+.arrow_up_left-ico {background-image: url("../image/icon/arrow_up_left.png");}
+.arrow_up_right-ico {background-image: url("../image/icon/arrow_up_right.png");}
+.arrow_down_left-ico {background-image: url("../image/icon/arrow_down_left.png");}
+.arrow_down_right-ico {background-image: url("../image/icon/arrow_down_right.png");}
+
+.breakpoint-ico {display: inline-block; background-repeat: no-repeat; background-size: 15px 15px; width: 15px; height: 15px;}
+.breakpoint-ico.on {background-image: url("../image/icon/point_up_ico_on.png");}
+.breakpoint-ico.off {background-image: url("../image/icon/point_up_ico_off.png");}
+
+/* ------------------------------------------------------------------ myfile-menu */
+.file-view table {width: 100%; margin-bottom: 0;}
+.file-view table tr {margin: 5px;}
+.file-view table tr.list-root i.myfolder-black-ico {margin-right: 10px; width: 16px; height: 16px; background-size: 16px 16px;}
+.file-view table tr.list-root > td {width: 100%; padding: 10px 0 10px 20px !important; font-weight: bold; background-color: #777; color: #fff;}
+.file-view table tr.list-file i.myfile-ico {margin-right: 5px; width: 16px; height: 16px; background-size: 16px 16px;}
+.file-view table tr.on {background-color: #eee !important; color: #333 !important; font-weight: bold !important;}
+.file-view table tr.click {background-color: #f0ad4e !important; color: #fff !important; font-weight: bold !important;}
+
+.file-view table tr td {width: 100%; padding: 7px !important; display: inline-flex;}
+.file-view table tr td .list-name {margin: 3px; width: 420px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11pt; cursor: pointer;}
+.file-view table tr td .list-btn {float: right; padding-top: 4px;}
+.file-view table tr td .list-btn a {margin-left:3px;}
+
+.file-view table tr td.depth-0 .list-name {margin-left: 30px;}
+
+.file-view .modal-body {height: 300px;}
+.file-view .modal-body .div-list-file {height: 225px; overflow: auto;}
