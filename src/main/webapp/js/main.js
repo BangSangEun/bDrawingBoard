@@ -16,6 +16,7 @@ require.config({
         DrawingAction: 'action/DrawingAction',
         GradientAction: 'action/GradientAction',
         Util: 'util/Util',
+        Drawing: 'model/Drawing',
         Member: 'model/Member',
         Tool: 'model/Tool',
         Pen: 'model/Pen',
