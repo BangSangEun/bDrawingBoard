@@ -70,7 +70,9 @@ define(['jquery', 'Util'],
                     }else if ($(event.target).parents('#gradient-type').length > 0) {
                         //종류 변경시 이벤트 - ('선형' 선택 시에만 각도 변경 가능)
                         var type = self.getType();
+                        var degree = $('#'+ type +'-direction').find('.dropdown-menu').find('li.selected > a').attr('data-tokens');
                         $('#gradient-direction').find('div[id$=direction]').hide();
+                        $('#gradient-degree').val(degree == "null"? 0 : degree);
                         if(type == 'line') {
                             $('#gradient-degree').removeAttr('disabled');
                             $('#line-direction').show();
