@@ -8,6 +8,7 @@ define([], function() {
             _data = {},
             _strokeStyle,
             _lineWidth,
+            _lineCap,
             _fillStyle,
             _imageData;
 
@@ -41,6 +42,14 @@ define([], function() {
 
         this.setLineWidth = function(lineWidth) {
             _lineWidth = lineWidth;
+        };
+
+        this.getLineCap = function() {
+            return _lineCap;
+        };
+
+        this.setLineCap = function(lineCap) {
+            _lineCap = lineCap;
         };
 
         this.getFillStyle = function() {
