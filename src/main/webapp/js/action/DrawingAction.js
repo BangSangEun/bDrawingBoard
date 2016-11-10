@@ -6,11 +6,12 @@ define(['jquery', 'GradientAction', 'Drawing'],
     function($, GradientAction, Drawing) {
         var drawingAction = function() {
             var self = this;
-            var paintOption;
+            var paintOption = null;
             var figureData;
             var lineData;
             var isMouseDown;
             var gradientAction;
+            var selectDrawing = null;
             var tool;
 
             /**
@@ -20,7 +21,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
             this.init = function(toolObj) {
                 gradientAction = new GradientAction();
                 tool = toolObj;
-                paintOption = $('#paint-option').find('.selectpicker option:eq(0)').attr('data-tokens');
             };
 
             /**
@@ -44,6 +44,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 $('#gradient-color-pallet').hide();
 
                 self.prevCanvasReturn();
+                paintOption = null;
                 tool.getContext().setLineDash([]);
                 self.setCanvasCursor(tool.getCurrent());
 
@@ -71,6 +72,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         break;
                     case 'paint' :
                         $('#paint-option').show();
+                        paintOption = $('#paint-option').find('select').val();
                         if(paintOption == 'gradient') {
                             $('#gradient-option').show();
                         }
@@ -159,26 +161,106 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * 선 그리기 이벤트
              * @param event
              */
-            this.drawLineEvent = function(event) {
-                tool.getPen().setNewPoint(event);
-                tool.getContext().lineWidth = tool.getPen().getSize(); //라인 굵기
-                tool.getContext().strokeStyle = tool.getPen().getColor(); //라인 색상
-                tool.getContext().lineCap = tool.getPen().getBrush(); //끝 부분 모양 (round, butt, square 가 있음)
+            this.drawLineEvent = function(event, index, drawing) {
+                var oldPoint = {}, newPoint = {};
+                var lineWidth, strokeStyle, lineCap;
+
+                if(event != null) { //일반 라인 그리기
+                    tool.getPen().setNewPoint(event);
+                    newPoint.x = tool.getPen().getNewPoint().x;
+                    newPoint.y = tool.getPen().getNewPoint().y;
+                    oldPoint.x = tool.getPen().getOldPoint().x;
+                    oldPoint.y = tool.getPen().getOldPoint().y;
+
+                    lineWidth = tool.getPen().getSize();
+                    strokeStyle = tool.getPen().getColor();
+                    lineCap = tool.getPen().getBrush();
+                }else { //그 외 - 두번째 인자에 Drawing 객체(라인 타입) 전달
+                    newPoint.x = drawing.getData()[index].newPoint.x;
+                    newPoint.y = drawing.getData()[index].newPoint.y;
+                    oldPoint.x = drawing.getData()[index].oldPoint.x;
+                    oldPoint.y = drawing.getData()[index].oldPoint.y;
+
+                    lineWidth = drawing.getLineWidth();
+                    strokeStyle = drawing.getStrokeStyle();
+                    lineCap = drawing.getLineCap();
+                }
+
+                tool.getContext().lineWidth = lineWidth; //라인 굵기
+                tool.getContext().strokeStyle = strokeStyle; //라인 색상
+                tool.getContext().lineCap = lineCap; //끝 부분 모양 (round, square 가 있음)
 
                 tool.getContext().beginPath();
-                tool.getContext().moveTo(tool.getPen().getOldPoint().x, tool.getPen().getOldPoint().y);
-                tool.getContext().lineTo(tool.getPen().getNewPoint().x, tool.getPen().getNewPoint().y);
+                tool.getContext().moveTo(oldPoint.x, oldPoint.y);
+                tool.getContext().lineTo(newPoint.x, newPoint.y);
                 tool.getContext().stroke();
-                lineData.push({oldPoint: $.extend({}, tool.getPen().getOldPoint()), newPoint: $.extend({}, tool.getPen().getNewPoint())});
+                lineData.push({oldPoint: $.extend({}, oldPoint), newPoint: $.extend({}, newPoint)});
 
-                tool.getPen().setOldPoint(null, tool.getPen().getNewPoint());
+                if(event != null) {
+                    tool.getPen().setOldPoint(null, newPoint);
+                }
+            };
+
+            /**
+             * 해당 개체 이전/이후 그림 개체 그리기 - (배열순)
+             */
+            this.drawOrderDrawing = function(drawOrder, index, isPaint) {
+                var data = tool.getData(),
+                    start, end;
+
+                if(drawOrder == 'prev') {
+                    start = 0;
+                    end = index;
+                }else if(drawOrder == 'next') {
+                    start = index + 1;
+                    end = data.length;
+                }
+
+                for(var i=start; i<end; i++) {
+                    if(data[i].getType() == 'pencil' || data[i].getType() == 'brush') {
+                        lineData = [];
+                        for(var j=0; j<data[i].getData().length; j++) {
+                            self.drawLineEvent(null, j, data[i]);
+                        }
+                    }else if(data[i].getType() == 'figure') {
+                        self.drawFigureEvent(null, data[i], isPaint);
+                    }
+                }
+            };
+
+            /**
+             * 개체 그리기 - line 타입의 경우 event로 그릴때 호출해야 함.
+             * @param drawingType : line, figure
+             * @param event
+             * @param index : data 배열의 index
+             * @param drawing : 그림 객체
+             * @param isPaint : 채우기 상태
+             */
+            this.drawDrawingObject = function(drawingType, event, index, drawing, isPaint) {
+                self.drawOrderDrawing('prev', index, false);
+
+                if(drawingType == 'line') {
+                    if(event == null) {
+                        self.drawLineEvent(null, index, drawing);
+                    }
+                }else if(drawingType == 'figure') {
+                    if(event != null) {
+                        self.drawFigureEvent(event);
+                    }else {
+                        self.drawFigureEvent(null, drawing, isPaint);
+                    }
+                }
+
+                if(tool.getData().length > index) {
+                    self.drawOrderDrawing('next', index, false);
+                }
             };
 
             /**
              * 도형 그리기 이벤트
              * @param event
              */
-            this.drawFigureEvent = function(event, drawing) {
+            this.drawFigureEvent = function(event, drawing, isPaint) {
                 var figureType, figureSize;
                 var newX, newY, oldX, oldY;
                 var fillStyle, lineWidth, strokeStyle;
@@ -203,11 +285,9 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     if(tool.getPen().getColor() == undefined) {
                         tool.getPen().setColor($('.color-pallet').find('li.on').css('background-color'));
                     }
-                    fillStyle = paintOption == 'single' ? tool.getPen().getColor() : figure.getFillStyle();
+                    fillStyle = paintOption == 'single' && isPaint ? tool.getPen().getColor() : figure.getFillStyle();
                 }
 
-                tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
-                tool.getContext().putImageData(tool.getPen().getImageData(), 0, 0);
                 tool.getContext().beginPath();
                 tool.getContext().setLineDash([]);
                 tool.getContext().fillStyle = fillStyle; //채우기 색상
@@ -230,23 +310,23 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 tool.getContext().closePath();
                 tool.getContext().stroke();
 
-                //개체 임시저장 - 도형 개체
-                figureData = new Drawing();
-                figureData.setType('figure');
-                figureData.setData({
-                    figureType : figureType,    //도형 타입
-                    coordinate : {              //도형 좌표
-                        x: oldX,
-                        y: oldY
-                    },
-                    figureSize: figureSize      //도형 크기
-                });
-                figureData.setStrokeStyle(tool.getContext().strokeStyle);
-                figureData.setLineWidth(tool.getContext().lineWidth);
-                figureData.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
-                figureData.setImageData(tool.getPen().getImageData());
-
-                return figureData;
+                if(isPaint == undefined || isPaint != undefined && isPaint) {
+                    //개체 임시저장 - 도형 개체
+                    figureData = new Drawing();
+                    figureData.setType('figure');
+                    figureData.setData({
+                        figureType : figureType,    //도형 타입
+                        coordinate : {              //도형 좌표
+                            x: oldX,
+                            y: oldY
+                        },
+                        figureSize: figureSize      //도형 크기
+                    });
+                    figureData.setStrokeStyle(tool.getContext().strokeStyle);
+                    figureData.setLineWidth(tool.getContext().lineWidth);
+                    figureData.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
+                    figureData.setImageData(tool.getPen().getImageData());
+                }
             };
 
             /**
@@ -272,20 +352,21 @@ define(['jquery', 'GradientAction', 'Drawing'],
              */
             this.paintEvent = function(event) {
                 //개체 선택
-                var obj = self.selectDrawingEvent(event);
+                self.selectDrawingEvent(event);
+                var drawing = selectDrawing.drawing, index = selectDrawing.index;
 
                 //개체선택 해제
                 self.prevCanvasReturn();
 
-                if(obj != undefined) {
+                if(selectDrawing != undefined) {
                     if(paintOption == 'gradient') {
-                        var gradientData = gradientAction.getTypeGradientData(obj.drawing.getData().coordinate, obj.drawing.getData().figureSize);
-                        gradientAction.setGradientFillStyle(tool.getContext(), gradientData, obj.drawing);
+                        var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize);
+                        gradientAction.setGradientFillStyle(tool.getContext(), gradientData, drawing);
                         obj.drawing.setFillStyle(tool.getContext().fillStyle);
                     }
+                    self.drawDrawingObject('figure', null, index, drawing, true);
 
-                    figureData = self.drawFigureEvent(null, obj.drawing);
-                    tool.getData()[obj.index] = figureData;
+                    tool.getData()[index] = figureData;
                     tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                 }
             };
@@ -299,7 +380,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 tool.getPen().setNewPoint(event);
                 var x = tool.getPen().getNewPoint().x, y = tool.getPen().getNewPoint().y;
                 var leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
-                var selectDrawing, inDrawing = false;
+                var inDrawing = false;
 
                 var dataArr = tool.getData().slice();
                 //거꾸로 순회해서 if 문에서 먼저 인식된 도형 찾으면 종료
@@ -379,8 +460,34 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     //개체선택 해제
                     self.prevCanvasReturn();
                 }
+            };
 
-                return selectDrawing;
+            /**
+             * 선택된 개체 이동
+             * @param event
+             */
+            this.moveSelectDrawingEvent = function(event) {
+                tool.getPen().setNewPoint(event);
+                var x = tool.getPen().getNewPoint().x, y = tool.getPen().getNewPoint().y;
+                //var leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
+                var drawing, index;
+
+                if(selectDrawing != null) {
+                    drawing = selectDrawing.drawing;
+                    index = selectDrawing.index;
+                    tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
+                    console.log(drawing.getData());
+                    if(drawing.getType() == 'line') {
+                        self.drawDrawingObject('line', null, index, drawing);
+                    }else if(drawing.getType() == 'figure') {
+                        drawing.getData().coordinate.x = x;
+                        drawing.getData().coordinate.y = y;
+                        self.drawDrawingObject('figure', null, index, drawing, true);
+
+                        tool.getData()[index] = figureData;
+                        tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
+                    }
+                }
             };
 
             /**
@@ -416,6 +523,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             case 'selectDrawing' :
                                 //개체선택 해제
                                 self.prevCanvasReturn();
+                                selectDrawing = null;
                                 self.selectDrawingEvent(event);
                                 break;
                         }
@@ -429,6 +537,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         drawing.setData(lineData);
                         drawing.setStrokeStyle(tool.getContext().strokeStyle);
                         drawing.setLineWidth(tool.getContext().lineWidth);
+                        drawing.setLineCap(tool.getContext().lineCap);
                         drawing.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
                         drawing.setImageData(tool.getPen().getImageData());
 
@@ -454,10 +563,14 @@ define(['jquery', 'GradientAction', 'Drawing'],
                                 self.drawLineEvent(event);
                                 break;
                             case 'figure' :
-                                self.drawFigureEvent(event);
+                                tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
+                                self.drawDrawingObject('figure', event, tool.getData().length);
                                 break;
                             case 'eraser' :
                                 self.eraserEvent(event);
+                                break;
+                            case 'selectDrawing' :
+                                self.moveSelectDrawingEvent(event);
                                 break;
                         }
                     }
