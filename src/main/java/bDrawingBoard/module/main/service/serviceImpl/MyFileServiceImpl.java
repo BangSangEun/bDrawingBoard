@@ -31,7 +31,7 @@ public class MyFileServiceImpl implements MyFileService {
                 tempObj.put("file_id", myFileInfoList.get(i).getFile_id());
                 tempObj.put("member_id", myFileInfoList.get(i).getMember_id());
                 tempObj.put("file_name", URLEncoder.encode(myFileInfoList.get(i).getFile_name(), "UTF-8"));
-                tempObj.put("file_url", myFileInfoList.get(i).getFile_url());
+                tempObj.put("file_data", myFileInfoList.get(i).getFile_data());
                 tempObj.put("regi_date", myFileInfoList.get(i).getRegi_date());
 
                 tempArray.put(tempObj);
@@ -66,40 +66,4 @@ public class MyFileServiceImpl implements MyFileService {
 
         return result;
     }
-
-    /* -- 서버에 이미지 파일로 저장하는 코드
-    @Override
-    public FileInfoVO setFileInfoVO(String file_dir, String save_img) {
-        FileInfoVO fileInfoVO = new FileInfoVO();
-        BufferedImage image = null;
-        String file_name = "";
-
-        try {
-            long currentTime = System.currentTimeMillis();
-            SimpleDateFormat simDf = new SimpleDateFormat("yyyyMMddHHmmss");
-            int randomNumber = (int)(Math.random() * 10000);
-
-            String[] imgStr = save_img.split(",");
-            String imgTemp = imgStr[1];
-
-            //이미지 스트림을 파일로 전환
-            BASE64Decoder decoder = new BASE64Decoder();
-            byte[] byteImg = decoder.decodeBuffer(imgTemp);
-            ByteArrayInputStream bis = new ByteArrayInputStream(byteImg);
-            image = ImageIO.read(bis);
-            bis.close();
-
-            file_name = String.valueOf(simDf.format(new Date(currentTime))+ "_" + randomNumber);
-            File fileObj = new File(file_dir + file_name + ".png");
-            ImageIO.write(image, "png", fileObj);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        fileInfoVO.setFile_name(file_name);
-        fileInfoVO.setFile_path(file_dir + file_name);
-
-        return fileInfoVO;
-    }
-    */
 }

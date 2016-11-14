@@ -48,7 +48,6 @@ public class MyFileController {
 
         myFileInfoVO.setMember_id(memberVO.getMember_id());
         myFileInfoVO.setFile_name(request.getParameter("file_name"));
-        myFileInfoVO.setFile_url(request.getParameter("file_url")); //img dataURL
         myFileInfoVO.setFile_data(request.getParameter("file_data")); //array data
 
         String result = myFileService.setMyFileInfo(myFileInfoVO);

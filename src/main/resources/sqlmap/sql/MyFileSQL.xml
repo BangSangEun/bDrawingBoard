@@ -10,7 +10,6 @@
 		SELECT	file_id
 				,member_id
 				,file_name
-				,file_url
 				,file_data
 				,regi_date
 		FROM	bDrawingBoard.myfile_info
@@ -24,7 +23,6 @@
 			file_id
 			,member_id
 			,file_name
-			,file_url
 			,file_data
 			,regi_date
 		)
@@ -32,7 +30,6 @@
 			SEQ_FILE_ID.nextval
 			,#{member_id}
 			,#{file_name}
-			,#{file_url}
 			,#{file_data}
 			,formatdatetime(now(),'yyyy-MM-dd/HH:mm:ss')
 		)

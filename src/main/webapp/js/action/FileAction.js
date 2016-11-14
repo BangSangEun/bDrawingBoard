@@ -2,8 +2,8 @@
  * 파일 관련 Action
  */
 
-define(['jquery'],
-    function($) {
+define(['jquery', 'DrawingAction', 'Drawing'],
+    function($, DrawingAction, Drawing) {
         var FileAction = function(tool) {
             var self = this;
             var fileData = {};
@@ -52,13 +52,12 @@ define(['jquery'],
                 var file_name = $('#filesave-name').val();
 
                 if(file_name != "") {
-                    //file로 떨궈서 가져오도록 수정해야 함. -- 수정필요
-                    var file_url = (tool.getCanvas()).toDataURL('image/png').replace("image/png", "image/octet-stream");
+                    var file_data = self.getConversionData(tool.getData());
 
                     $.ajax({
                         type: 'POST',
                         url: '/setMyFileInfo.do',
-                        data: {"file_name": file_name, "file_url": file_url, "file_data": tool.getData()},
+                        data: {"file_name": file_name, "file_data": file_data},
                         dataType: 'text',
                         success: function(result) {
                             if(result == 'success') {
@@ -78,6 +77,48 @@ define(['jquery'],
             };
 
             /**
+             * drawing 객체 배열을 json 형태로 변환
+             * @param dataArr
+             * @returns {Array}
+             */
+            this.getConversionDataToJson = function(dataArr) {
+                var data, jsonData = {}, jsonArr = [];
+                for(var i=0; i<dataArr.length; i++) {
+                    data = dataArr[i];
+
+                    jsonData.type = data.getType();
+                    jsonData.data = data.getData();
+                    jsonData.strokeStyle = data.getStrokeStyle();
+                    jsonData.lineWidth = data.getLineWidth();
+                    jsonData.fillStyle = data.getFillStyle();
+
+                    jsonArr.push($.extend({}, jsonData));
+                }
+
+                return JSON.stringify(jsonArr);
+            };
+
+            /**
+             * json 형태를 Drawing 객체 배열로 변환
+             * @param jsonData
+             */
+            this.getConversionJsonToData = function(jsonData) {
+                var dataArr = JSON.parse(jsonData);
+
+                for(var i=0; i<dataArr.length; i++) {
+                    dataArr[i] = $.extend(new Drawing, dataArr[i]);
+
+                    dataArr[i].setType(dataArr[i].type);
+                    dataArr[i].setData(dataArr[i].data);
+                    dataArr[i].setStrokeStyle(dataArr[i].strokeStyle);
+                    dataArr[i].setLineWidth(dataArr[i].lineWidth);
+                    dataArr[i].setFillStyle(dataArr[i].fillStyle);
+                }
+
+                return dataArr;
+            };
+
+            /**
              * 내 파일 목록 불러오기
              */
             this.myFileListRead = function() {
@@ -88,31 +129,30 @@ define(['jquery'],
                     success: function(result) {
                         var appendHtml = "";
                         var listObj = result.myFileInfoList;
-                        console.log(listObj);
-                        for(var i=0; i<listObj.length; i++) {
-                            appendHtml += "<tr class=\"list-file\">";
-                            appendHtml += "<td class=\"depth-0\" id=\"td-file-" + listObj[i].file_id + "\">";
-                            appendHtml += "<p class=\"list-name\">";
-                            appendHtml += "<i class=\"tool-ico myfile-ico\"></i>" + decodeURIComponent(listObj[i].file_name) + "</p>";
-                            appendHtml += "<div class=\"list-btn\">";
-                            appendHtml += "<a><i class=\"tool-ico savelocal-black-ico\"></i></a>"; // <!-- 다운로드 -->
-                            appendHtml += "<a><i class=\"tool-ico editname-ico\"></i></a>"; // <!-- 이름변경 -->
-                            appendHtml += "<a><i class=\"tool-ico drawclear-black-ico\"></i></a>"; // <!-- 삭제 -->
-                            appendHtml += "</div></td></tr>";
 
-                            fileData[listObj[i].file_id] = {
-                                data : listObj[i].file_data,
-                                imgUrl : listObj[i].file_url
-                            };
+                        if(listObj != undefined){
+                            for(var i=0; i<listObj.length; i++) {
+                                appendHtml += "<tr class=\"list-file\">";
+                                appendHtml += "<td class=\"depth-0\" id=\"td-file-" + listObj[i].file_id + "\">";
+                                appendHtml += "<p class=\"list-name\">";
+                                appendHtml += "<i class=\"tool-ico myfile-ico\"></i>" + decodeURIComponent(listObj[i].file_name) + "</p>";
+                                appendHtml += "<div class=\"list-btn\">";
+                                appendHtml += "<a><i class=\"tool-ico savelocal-black-ico\"></i></a>"; // <!-- 다운로드 -->
+                                appendHtml += "<a><i class=\"tool-ico editname-ico\"></i></a>"; // <!-- 이름변경 -->
+                                appendHtml += "<a><i class=\"tool-ico drawclear-black-ico\"></i></a>"; // <!-- 삭제 -->
+                                appendHtml += "</div></td></tr>";
+
+                                fileData[listObj[i].file_id] = listObj[i].file_data;
+                            }
+
+                            $('#myfile-list .div-list-file').find('tbody').append(appendHtml);
+
+                            // 내 파일 목록 이벤트
+                            var myfile_list_tr = $('#myfile-list .div-list-file table tr');
+                            myfile_list_tr.on('mousedown keydown mouseover mouseup mousemove', function(event) {
+                                self.myFileListEvent(event);
+                            });
                         }
-
-                        $('#myfile-list .div-list-file').find('tbody').append(appendHtml);
-
-                        // 내 파일 목록 이벤트
-                        var myfile_list_tr = $('#myfile-list .div-list-file table tr');
-                        myfile_list_tr.on('mousedown keydown mouseover mouseup mousemove', function(event) {
-                            self.myFileListEvent(event);
-                        });
                     },
                     error: function() {
                         alert("파일 목록 조회 오류입니다.\n해당 오류가 지속되면 관리자에게 문의하세요.");
@@ -134,11 +174,15 @@ define(['jquery'],
                         $('#myfile-list').find('tr.click').removeClass('click');
                         $(event.currentTarget).addClass('click');
 
-                        var img = new Image();
-                        img.src = fileData[fileDataIndex].imgUrl;
-                        img.onload = function() {
-                            tool.getContext().drawImage(img, 0, 0);
-                        };
+                        var dataArr = self.getConversionJsonToData(fileData[fileDataIndex]);
+                        tool.setData(dataArr);
+
+                        var drawingAction = new DrawingAction();
+                        drawingAction.init(tool);
+
+                        tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
+                        drawingAction.drawOrderDrawing('prev', tool.getData().length);
+
                         $('#myfile-list').modal('hide');
                     }else if(event.target.className.indexOf("savelocal") > -1) {
                         // 파일 다운로드

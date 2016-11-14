@@ -334,7 +334,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     figureData.setStrokeStyle(tool.getContext().strokeStyle);
                     figureData.setLineWidth(tool.getContext().lineWidth);
                     figureData.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
-                    figureData.setImageData(tool.getPen().getImageData());
                 }
             };
 
@@ -608,7 +607,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         drawing.setLineWidth(tool.getContext().lineWidth);
                         drawing.setLineCap(tool.getContext().lineCap);
                         drawing.setFillStyle(tool.getContext().fillStyle == undefined ? null : tool.getContext().fillStyle);
-                        drawing.setImageData(tool.getPen().getImageData());
 
                         //개체 저장
                         tool.getData().push(drawing);
