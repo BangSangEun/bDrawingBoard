@@ -191,9 +191,11 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 tool.getContext().lineCap = lineCap; //끝 부분 모양 (round, square 가 있음)
 
                 tool.getContext().beginPath();
+                tool.getContext().setLineDash([]);
                 tool.getContext().moveTo(oldPoint.x, oldPoint.y);
                 tool.getContext().lineTo(newPoint.x, newPoint.y);
                 tool.getContext().stroke();
+
                 lineData.push({oldPoint: $.extend({}, oldPoint), newPoint: $.extend({}, newPoint)});
 
                 if(event != null) {
@@ -204,7 +206,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
             /**
              * 해당 개체 이전/이후 그림 개체 그리기 - (배열순)
              */
-            this.drawOrderDrawing = function(drawOrder, index, isPaint) {
+            this.drawOrderDrawing = function(drawOrder, index, isSaveState) {
                 var data = tool.getData(),
                     start, end;
 
@@ -223,7 +225,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             self.drawLineEvent(null, j, data[i]);
                         }
                     }else if(data[i].getType() == 'figure') {
-                        self.drawFigureEvent(null, data[i], isPaint);
+                        self.drawFigureEvent(null, data[i], isSaveState);
                     }
                 }
             };
@@ -234,20 +236,20 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param event
              * @param index : data 배열의 index
              * @param drawing : 그림 객체
-             * @param isPaint : 채우기 상태
+             * @param isSaveState : 데이터 임시 저장 상태
              */
-            this.drawDrawingObject = function(drawingType, event, index, drawing, isPaint) {
+            this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, lineDataIndex) {
                 self.drawOrderDrawing('prev', index, false);
 
                 if(drawingType == 'line') {
                     if(event == null) {
-                        self.drawLineEvent(null, index, drawing);
+                        self.drawLineEvent(null, lineDataIndex, drawing);
                     }
                 }else if(drawingType == 'figure') {
                     if(event != null) {
                         self.drawFigureEvent(event);
                     }else {
-                        self.drawFigureEvent(null, drawing, isPaint);
+                        self.drawFigureEvent(null, drawing, isSaveState);
                     }
                 }
 
@@ -260,7 +262,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * 도형 그리기 이벤트
              * @param event
              */
-            this.drawFigureEvent = function(event, drawing, isPaint) {
+            this.drawFigureEvent = function(event, drawing, isSaveState) {
                 var figureType, figureSize;
                 var newX, newY, oldX, oldY;
                 var fillStyle, lineWidth, strokeStyle;
@@ -285,7 +287,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     if(tool.getPen().getColor() == undefined) {
                         tool.getPen().setColor($('.color-pallet').find('li.on').css('background-color'));
                     }
-                    fillStyle = paintOption == 'single' && isPaint ? tool.getPen().getColor() : figure.getFillStyle();
+                    fillStyle = paintOption == 'single' && isSaveState ? tool.getPen().getColor() : figure.getFillStyle();
                 }
 
                 tool.getContext().beginPath();
@@ -310,7 +312,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 tool.getContext().closePath();
                 tool.getContext().stroke();
 
-                if(isPaint == undefined || isPaint != undefined && isPaint) {
+                if(isSaveState == undefined || isSaveState != undefined && isSaveState) {
                     //개체 임시저장 - 도형 개체
                     figureData = new Drawing();
                     figureData.setType('figure');
@@ -362,7 +364,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     if(paintOption == 'gradient') {
                         var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize);
                         gradientAction.setGradientFillStyle(tool.getContext(), gradientData, drawing);
-                        obj.drawing.setFillStyle(tool.getContext().fillStyle);
+                        drawing.setFillStyle(tool.getContext().fillStyle);
                     }
                     self.drawDrawingObject('figure', null, index, drawing, true);
 
@@ -372,56 +374,83 @@ define(['jquery', 'GradientAction', 'Drawing'],
             };
 
             /**
+             * 선택된 개체 사각 영역 point 반환
+             * @param data
+             * @returns {{leftTop: {}, leftBottom: {}, rightTop: {}, rightBottom: {}}}
+             */
+            this.getSelectAreaPoint = function(data) {
+                var leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
+                var minStartPoint = {}, maxEndPoint = {};
+                var dataPoints = data.getData();
+                minStartPoint.x = dataPoints[0].oldPoint.x, minStartPoint.y = dataPoints[0].oldPoint.y;
+                maxEndPoint.x = dataPoints[0].oldPoint.x, maxEndPoint.y = dataPoints[0].oldPoint.y;
+
+                for(var i=0; i<dataPoints.length-2; i++) {
+                    if(dataPoints[i+1].oldPoint.x < minStartPoint.x) {
+                        minStartPoint.x = dataPoints[i+1].oldPoint.x;
+                    }
+                    if(dataPoints[i+1].oldPoint.y < minStartPoint.y) {
+                        minStartPoint.y = dataPoints[i+1].oldPoint.y;
+                    }
+                    if(maxEndPoint.x < dataPoints[i+1].oldPoint.x) {
+                        maxEndPoint.x = dataPoints[i+1].oldPoint.x;
+                    }
+                    if(maxEndPoint.y < dataPoints[i+1].oldPoint.y) {
+                        maxEndPoint.y = dataPoints[i+1].oldPoint.y;
+                    }
+                    if(i == dataPoints.length - 2) {
+                        if(dataPoints[dataPoints.length-2].newPoint.x < minStartPoint.x) {
+                            minStartPoint.x = dataPoints[dataPoints.length-2].newPoint.x;
+                        }else if(maxEndPoint.x < dataPoints[dataPoints.length-2].newPoint.x) {
+                            maxEndPoint.x = dataPoints[dataPoints.length-2].newPoint.x;
+                        }
+
+                        if(dataPoints[dataPoints.length-2].newPoint.y < minStartPoint.y) {
+                            minStartPoint.y = dataPoints[dataPoints.length-2].newPoint.y;
+                        }else if(maxEndPoint.y < dataPoints[dataPoints.length-2].newPoint.y) {
+                            maxEndPoint.y = dataPoints[dataPoints.length-2].newPoint.y;
+                        }
+                    }
+                }
+
+                leftTop.x = minStartPoint.x - data.getLineWidth(), leftTop.y = minStartPoint.y - data.getLineWidth();
+                leftBottom.x = minStartPoint.x - data.getLineWidth(), leftBottom.y = maxEndPoint.y + data.getLineWidth();
+                rightTop.x = maxEndPoint.x + data.getLineWidth(), rightTop.y = minStartPoint.y - data.getLineWidth();
+                rightBottom.x = maxEndPoint.x + data.getLineWidth(), rightBottom.y = maxEndPoint.y + data.getLineWidth();
+
+                return {
+                    leftTop: leftTop,
+                    leftBottom: leftBottom,
+                    rightTop: rightTop,
+                    rightBottom: rightBottom
+                };
+            }
+
+
+            /**
              * 개체 선택
              * @param event
              * @returns {*} : selectDrawing 객체 반환 (canvas 내 객체정보 배열의 index 정보 포함)
              */
-            this.selectDrawingEvent = function(event) {
-                tool.getPen().setNewPoint(event);
+            this.selectDrawingEvent = function(event, point) {
+                if(event != null) {
+                    tool.getPen().setNewPoint(event);
+                }else {
+                    tool.getPen().setNewPoint(null, point);
+                }
                 var x = tool.getPen().getNewPoint().x, y = tool.getPen().getNewPoint().y;
-                var leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
-                var inDrawing = false;
+                var points = {}, leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
 
                 var dataArr = tool.getData().slice();
                 //거꾸로 순회해서 if 문에서 먼저 인식된 도형 찾으면 종료
                 $(dataArr.reverse()).each(function(index, data) {
                     if(data.getType() == 'pencil' || data.getType() == 'brush') {
-                        var arrPoint = data.getData();
-                        var minStartPoint = {}, maxEndPoint = {};
-                        minStartPoint.x = arrPoint[0].oldPoint.x, minStartPoint.y = arrPoint[0].oldPoint.y;
-                        maxEndPoint.x = arrPoint[0].oldPoint.x, maxEndPoint.y = arrPoint[0].oldPoint.y;
-                        for(var i=0; i<arrPoint.length-2; i++) {
-                            if(arrPoint[i+1].oldPoint.x < minStartPoint.x) {
-                                minStartPoint.x = arrPoint[i+1].oldPoint.x;
-                            }
-                            if(arrPoint[i+1].oldPoint.y < minStartPoint.y) {
-                                minStartPoint.y = arrPoint[i+1].oldPoint.y;
-                            }
-                            if(maxEndPoint.x < arrPoint[i+1].oldPoint.x) {
-                                maxEndPoint.x = arrPoint[i+1].oldPoint.x;
-                            }
-                            if(maxEndPoint.y < arrPoint[i+1].oldPoint.y) {
-                                maxEndPoint.y = arrPoint[i+1].oldPoint.y;
-                            }
-                            if(i == arrPoint.length-2) {
-                                if(arrPoint[arrPoint.length-2].newPoint.x < minStartPoint.x) {
-                                    minStartPoint.x = arrPoint[arrPoint.length-2].newPoint.x;
-                                }else if(maxEndPoint.x < arrPoint[arrPoint.length-2].newPoint.x) {
-                                    maxEndPoint.x = arrPoint[arrPoint.length-2].newPoint.x;
-                                }
+                        points = self.getSelectAreaPoint(data);
 
-                                if(arrPoint[arrPoint.length-2].newPoint.y < minStartPoint.y) {
-                                    minStartPoint.y = arrPoint[arrPoint.length-2].newPoint.y;
-                                }else if(maxEndPoint.y < arrPoint[arrPoint.length-2].newPoint.y) {
-                                    maxEndPoint.y = arrPoint[arrPoint.length-2].newPoint.y;
-                                }
-                            }
-                        }
-
-                        leftTop.x = minStartPoint.x - data.getLineWidth(), leftTop.y = minStartPoint.y - data.getLineWidth(),
-                        leftBottom.x = minStartPoint.x - data.getLineWidth(), leftBottom.y = maxEndPoint.y + data.getLineWidth(),
-                        rightTop.x = maxEndPoint.x + data.getLineWidth(), rightTop.y = minStartPoint.y - data.getLineWidth(),
-                        rightBottom.x = maxEndPoint.x + data.getLineWidth(), rightBottom.y = maxEndPoint.y + data.getLineWidth();
+                        leftTop = points.leftTop;
+                        leftBottom = points.leftBottom;
+                        rightTop = points.rightTop;
+                        rightBottom = points.rightBottom;
                     }else if(data.getType() == 'figure') {
                         var figureX = data.getData().coordinate.x, figureY = data.getData().coordinate.y;
                         var figureSize = data.getData().figureType == 'square'? data.getData().figureSize/2 + (data.getLineWidth()/2 + 1) : data.getData().figureSize + (data.getLineWidth()/2 + 1);
@@ -435,7 +464,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     //사각 프레임 영역으로 도형 인식
                     if(leftTop.x <= x && x <= rightTop.x
                         && leftTop.y <= y && y <= leftBottom.y) {
-                        inDrawing = true;
 
                         tool.getContext().beginPath();
                         tool.getContext().setLineDash([4, 3]);
@@ -455,11 +483,6 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         return false;
                     }
                 });
-
-                if(!inDrawing) {
-                    //개체선택 해제
-                    self.prevCanvasReturn();
-                }
             };
 
             /**
@@ -469,23 +492,51 @@ define(['jquery', 'GradientAction', 'Drawing'],
             this.moveSelectDrawingEvent = function(event) {
                 tool.getPen().setNewPoint(event);
                 var x = tool.getPen().getNewPoint().x, y = tool.getPen().getNewPoint().y;
-                //var leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
                 var drawing, index;
 
                 if(selectDrawing != null) {
                     drawing = selectDrawing.drawing;
                     index = selectDrawing.index;
                     tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
-                    console.log(drawing.getData());
-                    if(drawing.getType() == 'line') {
-                        self.drawDrawingObject('line', null, index, drawing);
+
+                    if(drawing.getType() == 'pencil' || drawing.getType() == 'brush') {
+                        var centerPoint = {}, addPoint = {}, movePointArr = [{oldPoint: {}, newPoint: {}}];
+                        var points = self.getSelectAreaPoint(drawing);
+
+                        centerPoint.x = points.leftTop.x + (points.rightTop.x - points.leftTop.x)/2;
+                        centerPoint.y = points.leftTop.y + (points.leftBottom.y - points.leftTop.y)/2;
+
+                        console.log("중심점-----");
+                        console.log(centerPoint);
+                        addPoint.x = (x - centerPoint.x);
+                        addPoint.y = (y - centerPoint.y);
+                        console.log("addPoint-----");
+                        console.log(addPoint);
+
+                        for(var i=0; i<drawing.getData().length; i++) {
+                            movePointArr[i] = {
+                                newPoint: {
+                                    x: drawing.getData()[i].newPoint.x + addPoint.x,
+                                    y: drawing.getData()[i].newPoint.y + addPoint.y
+                                },
+                                oldPoint: {
+                                    x: drawing.getData()[i].oldPoint.x + addPoint.x,
+                                    y: drawing.getData()[i].oldPoint.y + addPoint.y
+                                }
+                            };
+                        }
+
+                        for(var i=0; i<drawing.getData().length; i++) {
+                            self.drawDrawingObject('line', null, index, drawing, null, i);
+                        }
+
+                        tool.getData()[index].setData(movePointArr);
                     }else if(drawing.getType() == 'figure') {
                         drawing.getData().coordinate.x = x;
                         drawing.getData().coordinate.y = y;
                         self.drawDrawingObject('figure', null, index, drawing, true);
 
                         tool.getData()[index] = figureData;
-                        tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                     }
                 }
             };
@@ -548,11 +599,9 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         tool.getData().push(figureData);
                     }
 
-                    if(tool.getCurrent() != 'selectDrawing' && tool.getCurrent() != 'paint') {
+                    if(tool.getCurrent() != 'paint') {
                         tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                     }
-
-                    console.log(tool.getData());
                 } else if (event.type == 'mouseover') {
                     isMouseDown = false;
                 } else if (event.type == 'mousemove') {
