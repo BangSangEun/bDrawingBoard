@@ -75,7 +75,7 @@ a {text-decoration: none !important;}
 
 /* ---------- color-pallet */
 #footer-panel .navi-footer .color-pallet {height: 70px; background-color: #DCDCDC;}
-#footer-panel .navi-footer .color-pallet ul {list-style: none; padding-top: 15px; margin: 0 0 0 25px; }
+#footer-panel .navi-footer .color-pallet ul {list-style: none; padding-top: 15px; margin-left: 55px; }
 #footer-panel .navi-footer .color-pallet ul li {display: inline-block; padding: 0; margin: 10px 5px; width: 20px; height: 20px; float:left; border: 1px solid #fff; font-weight: bold; background-color: #333333; cursor: pointer;}
 #footer-panel .navi-footer .color-pallet ul li:hover {opacity:0.8 !important; color: #fff !important;}
 #footer-panel .navi-footer .color-pallet ul li:active {opacity:0.4 !important; color: #fff !important;}
