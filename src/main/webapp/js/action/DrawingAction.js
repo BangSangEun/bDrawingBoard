@@ -238,7 +238,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param drawing : 그림 객체
              * @param isSaveState : 데이터 임시 저장 상태
              */
-            this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, lineDataIndex) {
+            this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, isMoveFigure, lineDataIndex) {
                 self.drawOrderDrawing('prev', index, false);
 
                 if(drawingType == 'line') {
@@ -249,7 +249,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     if(event != null) {
                         self.drawFigureEvent(event);
                     }else {
-                        self.drawFigureEvent(null, drawing, isSaveState);
+                        self.drawFigureEvent(null, drawing, isSaveState, isMoveFigure);
                     }
                 }
 
@@ -262,8 +262,8 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * 도형 그리기 이벤트
              * @param event
              */
-            this.drawFigureEvent = function(event, drawing, isSaveState) {
-                var figureType, figureSize;
+            this.drawFigureEvent = function(event, drawing, isSaveState, isMoveFigure) {
+                var figureType, figureSize, figureFillStyle;
                 var newX, newY, oldX, oldY;
                 var fillStyle, lineWidth, strokeStyle;
 
@@ -287,6 +287,12 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     if(tool.getPen().getColor() == undefined) {
                         tool.getPen().setColor($('.color-pallet').find('li.on').css('background-color'));
                     }
+                    if(isMoveFigure) {
+                        figureFillStyle = figure.getData().figureFillStyle;
+                    }else {
+                        figureFillStyle = paintOption;
+                    }
+
                     fillStyle = paintOption == 'single' && isSaveState ? tool.getPen().getColor() : figure.getFillStyle();
                 }
 
@@ -322,7 +328,8 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             x: oldX,
                             y: oldY
                         },
-                        figureSize: figureSize      //도형 크기
+                        figureSize : figureSize,      //도형 크기
+                        figureFillStyle : figureFillStyle
                     });
                     figureData.setStrokeStyle(tool.getContext().strokeStyle);
                     figureData.setLineWidth(tool.getContext().lineWidth);
@@ -440,6 +447,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 }
                 var x = tool.getPen().getNewPoint().x, y = tool.getPen().getNewPoint().y;
                 var points = {}, leftTop = {}, leftBottom = {}, rightTop = {}, rightBottom = {};
+                var inDrawing = false;
 
                 var dataArr = tool.getData().slice();
                 //거꾸로 순회해서 if 문에서 먼저 인식된 도형 찾으면 종료
@@ -455,15 +463,16 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         var figureX = data.getData().coordinate.x, figureY = data.getData().coordinate.y;
                         var figureSize = data.getData().figureType == 'square'? data.getData().figureSize/2 + (data.getLineWidth()/2 + 1) : data.getData().figureSize + (data.getLineWidth()/2 + 1);
 
-                        leftTop.x = figureX - figureSize, leftTop.y = figureY - figureSize,
-                        leftBottom.x = figureX - figureSize, leftBottom.y = figureY + figureSize,
-                        rightTop.x = figureX + figureSize, rightTop.y = figureY - figureSize,
+                        leftTop.x = figureX - figureSize, leftTop.y = figureY - figureSize;
+                        leftBottom.x = figureX - figureSize, leftBottom.y = figureY + figureSize;
+                        rightTop.x = figureX + figureSize, rightTop.y = figureY - figureSize;
                         rightBottom.x = figureX + figureSize, rightBottom.y = figureY + figureSize;
                     }
 
                     //사각 프레임 영역으로 도형 인식
                     if(leftTop.x <= x && x <= rightTop.x
                         && leftTop.y <= y && y <= leftBottom.y) {
+                        inDrawing = true;
 
                         tool.getContext().beginPath();
                         tool.getContext().setLineDash([4, 3]);
@@ -475,7 +484,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         tool.getContext().lineWidth = '1'; //라인 굵기
                         tool.getContext().strokeStyle = '#333333'; //라인 색상
                         tool.getContext().stroke();
-                        
+
                         selectDrawing = {
                             drawing : data,
                             index : dataArr.length - 1 - index
@@ -483,6 +492,11 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         return false;
                     }
                 });
+
+                if(!inDrawing) {
+                    //개체선택 해제
+                    self.prevCanvasReturn();
+                }
             };
 
             /**
@@ -506,12 +520,8 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         centerPoint.x = points.leftTop.x + (points.rightTop.x - points.leftTop.x)/2;
                         centerPoint.y = points.leftTop.y + (points.leftBottom.y - points.leftTop.y)/2;
 
-                        console.log("중심점-----");
-                        console.log(centerPoint);
                         addPoint.x = (x - centerPoint.x);
                         addPoint.y = (y - centerPoint.y);
-                        console.log("addPoint-----");
-                        console.log(addPoint);
 
                         for(var i=0; i<drawing.getData().length; i++) {
                             movePointArr[i] = {
@@ -527,17 +537,25 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         }
 
                         for(var i=0; i<drawing.getData().length; i++) {
-                            self.drawDrawingObject('line', null, index, drawing, null, i);
+                            self.drawDrawingObject('line', null, index, drawing, null, null, i);
                         }
 
                         tool.getData()[index].setData(movePointArr);
                     }else if(drawing.getType() == 'figure') {
                         drawing.getData().coordinate.x = x;
                         drawing.getData().coordinate.y = y;
-                        self.drawDrawingObject('figure', null, index, drawing, true);
 
+                        if(drawing.getData().figureFillStyle == 'gradient') {
+                            var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize);
+                            gradientAction.setGradientFillStyle(tool.getContext(), gradientData, drawing);
+                            drawing.setFillStyle(tool.getContext().fillStyle);
+                        }
+
+                        self.drawDrawingObject('figure', null, index, drawing, true, true);
                         tool.getData()[index] = figureData;
                     }
+
+                    tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                 }
             };
 
@@ -599,7 +617,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         tool.getData().push(figureData);
                     }
 
-                    if(tool.getCurrent() != 'paint') {
+                    if(tool.getCurrent() != 'selectDrawing' && tool.getCurrent() != 'paint') {
                         tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
                     }
                 } else if (event.type == 'mouseover') {
