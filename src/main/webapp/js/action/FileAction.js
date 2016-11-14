@@ -52,7 +52,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                 var file_name = $('#filesave-name').val();
 
                 if(file_name != "") {
-                    var file_data = self.getConversionData(tool.getData());
+                    var file_data = self.getConversionDataToJson(tool.getData());
 
                     $.ajax({
                         type: 'POST',
