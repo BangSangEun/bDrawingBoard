@@ -182,6 +182,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
 
                         tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
                         drawingAction.drawOrderDrawing('prev', tool.getData().length);
+                        tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
 
                         $('#myfile-list').modal('hide');
                     }else if(event.target.className.indexOf("savelocal") > -1) {
