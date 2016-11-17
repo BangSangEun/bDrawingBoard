@@ -85,14 +85,15 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                 var data, jsonData = {}, jsonArr = [];
                 for(var i=0; i<dataArr.length; i++) {
                     data = dataArr[i];
+                    if(data != undefined) {
+                        jsonData.type = data.getType();
+                        jsonData.data = data.getData();
+                        jsonData.strokeStyle = data.getStrokeStyle();
+                        jsonData.lineWidth = data.getLineWidth();
+                        jsonData.fillStyle = data.getFillStyle();
 
-                    jsonData.type = data.getType();
-                    jsonData.data = data.getData();
-                    jsonData.strokeStyle = data.getStrokeStyle();
-                    jsonData.lineWidth = data.getLineWidth();
-                    jsonData.fillStyle = data.getFillStyle();
-
-                    jsonArr.push($.extend({}, jsonData));
+                        jsonArr.push($.extend({}, jsonData));
+                    }
                 }
 
                 return JSON.stringify(jsonArr);
@@ -135,7 +136,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                                 appendHtml += "<tr class=\"list-file\">";
                                 appendHtml += "<td class=\"depth-0\" id=\"td-file-" + listObj[i].file_id + "\">";
                                 appendHtml += "<p class=\"list-name\">";
-                                appendHtml += "<i class=\"tool-ico myfile-ico\"></i>" + decodeURIComponent(listObj[i].file_name) + "</p>";
+                                appendHtml += "<i class=\"tool-ico myfile-ico\"></i>" + decodeURIComponent(listObj[i].file_name).replace(/\+/g, ' ') + "</p>";
                                 appendHtml += "<div class=\"list-btn\">";
                                 appendHtml += "<a><i class=\"tool-ico savelocal-black-ico\"></i></a>"; // <!-- 다운로드 -->
                                 appendHtml += "<a><i class=\"tool-ico editname-ico\"></i></a>"; // <!-- 이름변경 -->
@@ -149,7 +150,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
 
                             // 내 파일 목록 이벤트
                             var myfile_list_tr = $('#myfile-list .div-list-file table tr');
-                            myfile_list_tr.on('mousedown keydown mouseover mouseup mousemove', function(event) {
+                            myfile_list_tr.on('mousedown mouseover mouseup mousemove', function(event) {
                                 self.myFileListEvent(event);
                             });
                         }
@@ -187,7 +188,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         $('#myfile-list').modal('hide');
                     }else if(event.target.className.indexOf("savelocal") > -1) {
                         // 파일 다운로드
-                        location.href = fileData[fileDataIndex].imgUrl;
+                        //location.href = fileData[fileDataIndex].imgUrl;
                     }else if(event.target.className.indexOf("editname") > -1) {
                         // 파일 이름변경
 
