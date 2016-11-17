@@ -12,14 +12,14 @@
 				,file_name
 				,file_data
 				,regi_date
-		FROM	bDrawingBoard.myfile_info
+		FROM	myfile_info
 		WHERE	member_id = #{member_id}
 		ORDER BY file_id;
 	</select>
 
 	<insert id="setMyFileInfo" parameterType="MyFileInfoVO">
 		/* 내 파일 저장 */
-		INSERT	INTO	bDrawingBoard.myfile_info (
+		INSERT	INTO	myfile_info (
 			file_id
 			,member_id
 			,file_name
@@ -37,7 +37,7 @@
 
 	<update id="updateMyFileInfo" parameterType="MyFileInfoVO">
 		/* 내 파일 정보 수정 */
-		UPDATE	bDrawingBoard.myfile_info
+		UPDATE	myfile_info
 		SET 	file_name = #{file_name}
 		WHERE	member_id = #{member_id}
 		AND		file_id = #{file_id}

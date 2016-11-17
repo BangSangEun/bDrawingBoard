@@ -8,7 +8,7 @@
 	<select id="getMemberInfoCheck" parameterType="MemberVO" resultType="Integer">
 		/* 로그인 정보 확인 */
 		SELECT	COUNT(*)
-		FROM	bDrawingBoard.member
+		FROM	member
 		WHERE	use_yn = 'Y'
 		AND 	member_id = #{member_id}
 		AND		member_pw = #{member_pw}
@@ -19,7 +19,7 @@
 		SELECT	member_id
 				,member_name
 				,member_email
-		FROM	bDrawingBoard.member
+		FROM	member
 		WHERE	use_yn = 'Y'
 		AND 	member_id = #{member_id}
 	</select>
