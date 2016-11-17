@@ -31,6 +31,11 @@ define(['jquery', 'DrawingAction', 'GradientAction'],
                 }else if($(event.target).parents('div#gradient-option-view').length > 0) {
                     //그라데이션 옵션 이벤트
                     gradientAction.setHandler(event);
+                }else if(event.type == 'keydown') {
+                    if(event.keyCode == 46) { //delete key
+                        //선택된 개체 삭제
+                        drawingAction.deleteSelectDrawing(event);
+                    }
                 }else {
                     if(event.type == 'mousedown') {
                         if(event.target.id.indexOf('tool') > -1) {

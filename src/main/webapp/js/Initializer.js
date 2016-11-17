@@ -43,7 +43,7 @@ define(['jquery', 'Tool', 'Util', 'DrawingEventHandler', 'FileEventHandler'],
                 var fileEventHandler = new FileEventHandler();
                 fileEventHandler.init(tool);
                 for(var i=0; i<fileEventObj.length; i++) {
-                    fileEventObj[i].on('mousedown keydown mouseover mouseup mousemove', function(event) {
+                    fileEventObj[i].on('mousedown mouseover mouseup mousemove', function(event) {
                         fileEventHandler.setHandler(event);
                     });
                 }
@@ -51,10 +51,16 @@ define(['jquery', 'Tool', 'Util', 'DrawingEventHandler', 'FileEventHandler'],
                 var drawingEventHandler = new DrawingEventHandler();
                 drawingEventHandler.init(tool);
                 for(var i=0; i<drawEventObj.length; i++) {
-                    drawEventObj[i].on('mousedown keydown mouseover mouseup mousemove change', function(event) {
+                    drawEventObj[i].on('mousedown mouseover mouseup mousemove change', function(event) {
                         drawingEventHandler.setHandler(event);
                     });
                 }
+
+                //document keydown event 바인딩
+                $(document).on('keydown', function(event) {
+                    //선택된 개체 삭제
+                    drawingEventHandler.setHandler(event);
+                });
 
                 //화면 크기 변경시 캔바스 크기 조절 및 다시그리기
                 $(window).resize(function() {
