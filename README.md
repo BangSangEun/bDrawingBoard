@@ -139,7 +139,6 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 
 <img src="http://i.imgur.com/tD8OsBP.png" width="700">
 
-<br/>
 ### 그리기
 > - 빨간색 박스 내의 기능
 > - 초록색 박스 내의 옵션 기능
