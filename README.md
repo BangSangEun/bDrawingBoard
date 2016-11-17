@@ -13,6 +13,12 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
 ![view_img](http://i.imgur.com/l0q0NHR.png)
 
 <br/>
+> **Note :**
+
+> - 화면 UI의 형태는 bootstrap을 사용하여 디자인 되었습니다.
+
+
+<br/>
 > # 개발 환경
 
 * **IDE :** intelliJ IDEA 2016.2.2
