@@ -10,7 +10,7 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
 > # 화면
 
 <br/>
-![view_img](http://i.imgur.com/lMSfLRk.png)
+![view_img](http://i.imgur.com/l0q0NHR.png)
 
 <br/>
 > # 개발 환경
@@ -128,8 +128,10 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
 <br/>
 > # 기능
 
-### 그리기
+<br/>
+<img src="http://i.imgur.com/tD8OsBP.png" width="700">
 
+### 그리기
 
 
 <br/>
