@@ -206,7 +206,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
             /**
              * 해당 개체 이전/이후 그림 개체 그리기 - (배열순)
              */
-            this.drawOrderDrawing = function(drawOrder, index, isSaveState) {
+            this.drawOrderDrawing = function(drawOrder, index, isSaveState, isMoveFigure) {
                 var data = tool.getData(),
                     start, end;
 
@@ -226,7 +226,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                                 self.drawLineEvent(null, j, data[i]);
                             }
                         }else if(data[i].getType() == 'figure') {
-                            self.drawFigureEvent(null, data[i], isSaveState);
+                            self.drawFigureEvent(null, data[i], isSaveState, isMoveFigure);
                         }
                     }
                 }
@@ -241,7 +241,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param isSaveState : 데이터 임시 저장 상태
              */
             this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, isMoveFigure, lineDataIndex) {
-                self.drawOrderDrawing('prev', index, false);
+                self.drawOrderDrawing('prev', index, false, isMoveFigure);
 
                 if(drawingType == 'line') {
                     if(event == null) {
@@ -256,7 +256,13 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 }
 
                 if(tool.getData().length > index) {
-                    self.drawOrderDrawing('next', index, false);
+                    if(drawingType == 'line') {
+                        if(tool.getData()[index].getData().length - 1  == lineDataIndex) {
+                            self.drawOrderDrawing('next', index, false, isMoveFigure);
+                        }
+                    }else {
+                        self.drawOrderDrawing('next', index, false, isMoveFigure);
+                    }
                 }
             };
 
@@ -295,7 +301,16 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         figureFillStyle = paintOption;
                     }
 
-                    fillStyle = paintOption == 'single' && isSaveState ? tool.getPen().getColor() : figure.getFillStyle();
+                    if(!isMoveFigure && figureFillStyle == 'single' && isSaveState) {
+                        fillStyle = tool.getPen().getColor();
+                    }else {
+                        fillStyle = figure.getFillStyle();
+                        if(figureFillStyle == 'gradient' && fillStyle.constructor != CanvasGradient) {
+                            var gradientData = gradientAction.getTypeGradientData(figure.getData().coordinate, figureSize);
+                            gradientAction.setGradientFillStyle(tool.getContext(), gradientData, figure);
+                            fillStyle = tool.getContext().fillStyle;
+                        }
+                    }
                 }
 
                 tool.getContext().beginPath();
@@ -624,7 +639,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         //선 개체
                         var drawing = new Drawing();
                         drawing.setType(tool.getCurrent());
-                        drawing.setData(lineData);
+                        drawing.setData($.extend([], lineData));
                         drawing.setStrokeStyle(tool.getContext().strokeStyle);
                         drawing.setLineWidth(tool.getContext().lineWidth);
                         drawing.setLineCap(tool.getContext().lineCap);

@@ -182,7 +182,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         drawingAction.init(tool);
 
                         tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
-                        drawingAction.drawOrderDrawing('prev', tool.getData().length);
+                        drawingAction.drawOrderDrawing('prev', tool.getData().length, false, true);
                         tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
 
                         $('#myfile-list').modal('hide');
