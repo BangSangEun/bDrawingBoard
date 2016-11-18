@@ -187,7 +187,7 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 
 ### 초기화 및 로그인 시나리오
 
-![java_diagram_2](http://i.imgur.com/fqiCRxg.png)
+![java_diagram_2](http://i.imgur.com/stqWMu3.png)
 
 <br/>
 ### 초기화 및 로그인 시나리오
