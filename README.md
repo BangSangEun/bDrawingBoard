@@ -99,7 +99,7 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
   * main.js
 <br/>
 
-![javascript_diagram_1](http://i.imgur.com/yzFjXM4.png)
+![javascript_diagram](http://i.imgur.com/tS0Y2Sl.png)
 
 <br/>
 > **Note :**
@@ -185,19 +185,29 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 <br/>
 > # 동작 방식
 
-### 초기화 및 로그인 시나리오
+### 로그인 시나리오
 
-![java_diagram_1](http://i.imgur.com/stqWMu3.png)
-
-<br/>
-### 도형 그리기 및 채우기 기능 시나리오
-
-![java_diagram_2](http://i.imgur.com/QubJOFB.png)
+![java_diagram_login](http://i.imgur.com/aZbg93H.png)
 
 <br/>
-### 파일 저장 및 파일 목록 보기 기능 시나리오
+### 도형 그리기 기능 시나리오
 
-![java_diagram_3](http://i.imgur.com/aoxBLqP.png)
+![java_diagram_draw_1](http://i.imgur.com/j0MN63a.png)
+
+<br/>
+### 채우기(그라데이션) 기능 시나리오
+
+![java_diagram_draw_2](http://i.imgur.com/j0MN63a.png)
+
+<br/>
+### 파일 저장 기능 시나리오
+
+![java_diagram_file_1](http://i.imgur.com/RtUtInZ.png)
+
+<br/>
+### 파일 목록 보기 기능 시나리오
+
+![java_diagram_file_2](http://i.imgur.com/DS5DFX3.png)
 
 <br/>
 > # 버전 관리
