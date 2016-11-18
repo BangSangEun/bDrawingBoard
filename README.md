@@ -25,8 +25,8 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
 * **java version :** 1.8.0_101
 * **servlet/Spring :** Spring 4.3.2.RELEASE
 * **Maven :** 3.3.9
-* **HTML5**
-* **CSS3**
+* **HTML5, CSS3**
+* **Mybatis : 3.4.1**
 * **tomcat version :** 8.5.5
 * **DB :** H2 내장 DB
 * **jQuery JS, RequireJS, bootstrap JS** lib
