@@ -65,7 +65,9 @@ define(['jquery', 'Tool', 'Util', 'DrawingEventHandler', 'FileEventHandler'],
                 //화면 크기 변경시 캔바스 크기 조절 및 다시그리기
                 $(window).resize(function() {
                     self.initCanvas();
-                    tool.getContext().putImageData(tool.getPen().getImageData(), 0, 0);
+                    if(tool.getPen().getImageData() != undefined) {
+                        tool.getContext().putImageData(tool.getPen().getImageData(), 0, 0);
+                    }
                 });
             };
 
