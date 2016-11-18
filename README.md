@@ -187,12 +187,17 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 
 ### 초기화 및 로그인 시나리오
 
-![java_diagram_2](http://i.imgur.com/stqWMu3.png)
+![java_diagram_1](http://i.imgur.com/stqWMu3.png)
 
 <br/>
-### 초기화 및 로그인 시나리오
+### 도형 그리기 및 채우기 기능 시나리오
 
-![java_diagram_2](http://i.imgur.com/Rbwx0yg.png)
+![java_diagram_2](http://i.imgur.com/QubJOFB.png)
+
+<br/>
+### 파일 저장 및 파일 목록 보기 기능 시나리오
+
+![java_diagram_3](http://i.imgur.com/aoxBLqP.png)
 
 <br/>
 > # 버전 관리
