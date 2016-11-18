@@ -25,8 +25,8 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
 * **java version :** 1.8.0_101
 * **servlet/Spring :** Spring 4.3.2.RELEASE
 * **Maven :** 3.3.9
-* **HTML5**
-* **CSS3**
+* **HTML5, CSS3**
+* **Mybatis : 3.4.1**
 * **tomcat version :** 8.5.5
 * **DB :** H2 내장 DB
 * **jQuery JS, RequireJS, bootstrap JS** lib
@@ -64,8 +64,7 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
 |  |  | 브러시 | 브러시 모양을 선택하여 굵은 크기로 그린다. | 크기조절 4단계 |
 |  |  | 도형 | 원, 사각, 삼각형 도형을 선택하여 그린다. |  |
 |  |  | 채우기 | 도형을 색으로 채운다. | 단색, 그라데이션 |
-|  |  | 개체 지움 | 그림 개체를 지운다. |  |
-|  |  | 개체 선택 | 그림 개체 영역을 선택하고 이동할 수 있다. |  |
+|  |  | 개체 선택 | 그림 개체 영역을 선택하고 이동할 수 있다. | Delete key 사용시 개체 지움 |
 |  |  | 색 팔레트 | 색상을 선택한다. |  |
 |  | 새로 그리기 |  | 그림 전체를 지운다. |  |
 | 로그인 | 사용자 로그인 |  | 로그인을 한다. | 로그인 후 main으로<br/>이동한다. | 
@@ -100,7 +99,7 @@ Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장
   * main.js
 <br/>
 
-![javascript_diagram_1](http://i.imgur.com/yzFjXM4.png)
+![javascript_diagram](http://i.imgur.com/tS0Y2Sl.png)
 
 <br/>
 > **Note :**
@@ -165,6 +164,7 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
   - 그라데이션은 그라데이션 채우기 옵션 창에서 각 중지점에 선택된 색과 위치, 각도를 기준으로 만들어진 그라데이션 색상을 가집니다. `fillStyle`
 * 개체선택
   - 클릭한 마우스 포인터의 위치가 개체의 영역에 포함되는지 확인한 후 개체 영역이 Dash Line 으로 표시됩니다.
+  - 개체선택 상태에서 Delete Key를 사용하면 해당 개체가 삭제됩니다.
 
 <br/>
 
@@ -185,14 +185,29 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 <br/>
 > # 동작 방식
 
-### 초기화 및 로그인 시나리오
+### 로그인 시나리오
 
-![java_diagram_2](http://i.imgur.com/fqiCRxg.png)
+![java_diagram_login](http://i.imgur.com/aZbg93H.png)
 
 <br/>
-### 초기화 및 로그인 시나리오
+### 도형 그리기 기능 시나리오
 
-![java_diagram_2](http://i.imgur.com/Rbwx0yg.png)
+![java_diagram_draw_1](http://i.imgur.com/j0MN63a.png)
+
+<br/>
+### 채우기(그라데이션) 기능 시나리오
+
+![java_diagram_draw_2](http://i.imgur.com/j0MN63a.png)
+
+<br/>
+### 파일 저장 기능 시나리오
+
+![java_diagram_file_1](http://i.imgur.com/RtUtInZ.png)
+
+<br/>
+### 파일 목록 보기 기능 시나리오
+
+![java_diagram_file_2](http://i.imgur.com/DS5DFX3.png)
 
 <br/>
 > # 버전 관리
