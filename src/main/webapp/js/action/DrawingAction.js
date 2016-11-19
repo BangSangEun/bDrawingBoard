@@ -241,7 +241,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param isSaveState : 데이터 임시 저장 상태
              */
             this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, isMoveFigure, lineDataIndex) {
-                self.drawOrderDrawing('prev', index, false, isMoveFigure);
+                self.drawOrderDrawing('prev', index, false, true);
 
                 if(drawingType == 'line') {
                     if(event == null) {
@@ -258,10 +258,10 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 if(tool.getData().length > index) {
                     if(drawingType == 'line') {
                         if(tool.getData()[index].getData().length - 1  == lineDataIndex) {
-                            self.drawOrderDrawing('next', index, false, isMoveFigure);
+                            self.drawOrderDrawing('next', index, false, true);
                         }
                     }else {
-                        self.drawOrderDrawing('next', index, false, isMoveFigure);
+                        self.drawOrderDrawing('next', index, false, true);
                     }
                 }
             };
@@ -271,7 +271,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param event
              */
             this.drawFigureEvent = function(event, drawing, isSaveState, isMoveFigure) {
-                var figureType, figureSize, figureFillStyle;
+                var figureType, figureSize, figureFillStyle, gradientFillType, gradientColor, gradientPosition;
                 var newX, newY, oldX, oldY;
                 var fillStyle, lineWidth, strokeStyle;
 
@@ -295,19 +295,33 @@ define(['jquery', 'GradientAction', 'Drawing'],
                     if(tool.getPen().getColor() == undefined) {
                         tool.getPen().setColor($('.color-pallet').find('li.on').css('background-color'));
                     }
-                    if(isMoveFigure) {
-                        figureFillStyle = figure.getData().figureFillStyle;
-                    }else {
-                        figureFillStyle = paintOption;
-                    }
+
+                    figureFillStyle = isMoveFigure ? figure.getData().figureFillStyle : paintOption;
 
                     if(!isMoveFigure && figureFillStyle == 'single' && isSaveState) {
                         fillStyle = tool.getPen().getColor();
                     }else {
                         fillStyle = figure.getFillStyle();
-                        if(figureFillStyle == 'gradient' && fillStyle.constructor != CanvasGradient) {
-                            var gradientData = gradientAction.getTypeGradientData(figure.getData().coordinate, figureSize);
-                            gradientAction.setGradientFillStyle(tool.getContext(), gradientData, figure);
+                        if(figureFillStyle == 'gradient') {
+                            gradientFillType = figure.getData().gradientFillType;
+                            gradientColor = figure.getData().gradientColor;
+                            gradientPosition = figure.getData().gradientPosition;
+
+                            if(!isMoveFigure || gradientFillType == undefined) {
+                                gradientFillType = gradientAction.getType();
+                                figure.getData().gradientFillType = gradientFillType;
+                            }
+                            if(!isMoveFigure || gradientColor == undefined) {
+                                gradientColor = [$($('.breakpoint')[0]).attr('gradient-color'), $($('.breakpoint')[1]).attr('gradient-color')];
+                                figure.getData().gradientColor = gradientColor;
+                            }
+                            if(!isMoveFigure || gradientPosition == undefined) {
+                                gradientPosition = [$($('.breakpoint')[0]).attr('gradient-position'), $($('.breakpoint')[1]).attr('gradient-position')];
+                                figure.getData().gradientPosition = gradientPosition;
+                            }
+
+                            var gradientData = gradientAction.getTypeGradientData(figure.getData().coordinate, figureSize, figure);
+                            gradientAction.setGradientFillStyle(tool.getContext(), gradientData);
                             fillStyle = tool.getContext().fillStyle;
                         }
                     }
@@ -346,7 +360,10 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             y: oldY
                         },
                         figureSize : figureSize,      //도형 크기
-                        figureFillStyle : figureFillStyle
+                        figureFillStyle : figureFillStyle,
+                        gradientFillType : gradientFillType,
+                        gradientColor : gradientColor,
+                        gradientPosition : gradientPosition
                     });
                     figureData.setStrokeStyle(tool.getContext().strokeStyle);
                     figureData.setLineWidth(tool.getContext().lineWidth);
@@ -384,12 +401,14 @@ define(['jquery', 'GradientAction', 'Drawing'],
                 self.prevCanvasReturn();
 
                 if(selectDrawing != undefined) {
+                    drawing.getData().figureFillStyle = paintOption;
                     if(paintOption == 'gradient') {
-                        var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize);
-                        gradientAction.setGradientFillStyle(tool.getContext(), gradientData, drawing);
+                        drawing.getData().gradientFillType = gradientAction.getType();
+                        var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize, drawing);
+                        gradientAction.setGradientFillStyle(tool.getContext(), gradientData);
                         drawing.setFillStyle(tool.getContext().fillStyle);
                     }
-                    self.drawDrawingObject('figure', null, index, drawing, true);
+                    self.drawDrawingObject('figure', null, index, drawing, true, false);
 
                     tool.getData()[index] = figureData;
                     tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
@@ -564,8 +583,8 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         drawing.getData().coordinate.y = y;
 
                         if(drawing.getData().figureFillStyle == 'gradient') {
-                            var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize);
-                            gradientAction.setGradientFillStyle(tool.getContext(), gradientData, drawing);
+                            var gradientData = gradientAction.getTypeGradientData(drawing.getData().coordinate, drawing.getData().figureSize, drawing);
+                            gradientAction.setGradientFillStyle(tool.getContext(), gradientData);
                             drawing.setFillStyle(tool.getContext().fillStyle);
                         }
 

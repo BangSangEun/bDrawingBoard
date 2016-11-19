@@ -119,15 +119,14 @@ define(['jquery', 'Util'],
              * 그라데이션 스타일 세팅
              * @param context : canvas DOM 객체의 context
              * @param gradientData : 그라데이션 데이터
-             * @param isBreakPointBar : 그라데이션 옵션 뷰의 중지점 바 여부
              */
-             this.setGradientFillStyle = function(context, gradientData, isBreakPointBar) {
+             this.setGradientFillStyle = function(context, gradientData) {
                  var startBreakPoint = gradientData[0], endBreakPoint = gradientData[gradientData.length - 1];
                  var gradient;
 
-                 if(isBreakPointBar == 'breakbar' || self.getType() == 'line') { //선형
+                 if(startBreakPoint.type == 'line') { //선형
                      gradient = context.createLinearGradient(startBreakPoint.x, startBreakPoint.y, endBreakPoint.x, endBreakPoint.y);
-                 }else if(self.getType() == 'radial') { //방사형
+                 }else if(startBreakPoint.type == 'radial') { //방사형
                      gradient = context.createRadialGradient(startBreakPoint.x, startBreakPoint.y, startBreakPoint.radius, endBreakPoint.x, endBreakPoint.y, endBreakPoint.radius);
                  }
 
@@ -168,18 +167,27 @@ define(['jquery', 'Util'],
              * 그라데이션 종류별 gradientData 객체 반환
              * @param objPoint
              * @param objSize
+             * @param drawing
              * @returns {*}
              */
-            this.getTypeGradientData = function(objPoint, objSize) {
-                var type = self.getType(), pointArr, gradientData;
+            this.getTypeGradientData = function(objPoint, objSize, drawing) {
+                var type, pointArr, gradientData, gradientColor, gradientPosition;
 
-                if(type == 'line') {
-                    pointArr = self.getDegreePoint(self.getDegree(), objPoint, objSize);
-                }else if(type == 'radial') {
-                    pointArr = self.getRadialDirectionPoint(self.getDegree(), objPoint, objSize);
+                if(drawing != undefined && drawing.getData().figureFillStyle != undefined) {
+                    type = drawing.getData().gradientFillType;
+                    gradientColor = drawing.getData().gradientColor;
+                    gradientPosition = drawing.getData().gradientPosition;
+                }else {
+                    type = self.getType();
                 }
 
-                gradientData = self.getGradientData(pointArr);
+                if(type == 'line') {
+                    pointArr = self.getDegreePoint(self.getDegree(), objPoint, objSize, gradientColor, gradientPosition);
+                }else if(type == 'radial') {
+                    pointArr = self.getRadialDirectionPoint(self.getDegree(), objPoint, objSize, gradientColor, gradientPosition);
+                }
+
+                gradientData = self.getGradientData(pointArr, type);
 
                 return gradientData;
             };
@@ -188,7 +196,7 @@ define(['jquery', 'Util'],
             /**
              * 방사형 방향에 따른 point 객체 반환
              */
-            this.getRadialDirectionPoint = function(degree, objPoint, objSize) {
+            this.getRadialDirectionPoint = function(degree, objPoint, objSize, gradientColor, gradientPosition) {
                 var startPoint = {}, endPoint = {}, tempPoint = [];
                 var x = objPoint.x, y = objPoint.y;
 
@@ -219,6 +227,13 @@ define(['jquery', 'Util'],
                 endPoint.y = startPoint.y;
                 endPoint.radius = objSize * 2;
 
+                if(gradientColor != undefined && gradientPosition != undefined) {
+                    startPoint.color = gradientColor[0];
+                    startPoint.position = gradientPosition[0];
+                    endPoint.color = gradientColor[1];
+                    endPoint.position = gradientPosition[1];
+                }
+
                 tempPoint = [startPoint, endPoint];
 
                 return tempPoint;
@@ -231,7 +246,7 @@ define(['jquery', 'Util'],
              * @param objSize : 적용 객체 size
              * @returns {Array}
              */
-            this.getDegreePoint = function(degree, objPoint, objSize) {
+            this.getDegreePoint = function(degree, objPoint, objSize, gradientColor, gradientPosition) {
                 var startPoint = {}, endPoint = {}, tempPoint = [];
                 var x = objPoint.x, y = objPoint.y;
                 var temp = (objSize * 2) / 90;
@@ -266,6 +281,13 @@ define(['jquery', 'Util'],
                     endPoint.y = (y - objSize) + temp * degree;
                 }
 
+                if(gradientColor != undefined && gradientPosition != undefined) {
+                    startPoint.color = gradientColor[0];
+                    startPoint.position = gradientPosition[0];
+                    endPoint.color = gradientColor[1];
+                    endPoint.position = gradientPosition[1];
+                }
+
                 tempPoint = [startPoint, endPoint];
 
                 return tempPoint;
@@ -277,7 +299,7 @@ define(['jquery', 'Util'],
              * @param objSize
              * @returns {{point: Array, degree: (*|jQuery)}|*}
              */
-            this.getGradientData = function(pointArr) {
+            this.getGradientData = function(pointArr, type) {
                 var gradientData = [];
                 var breakPoint = $('.breakpoint'); //모든 breakpoint 개체
 
@@ -285,9 +307,10 @@ define(['jquery', 'Util'],
                     gradientData[index] = {
                         x: this.x,
                         y: this.y,
-                        color: $(breakPoint[index]).attr('gradient-color'),
-                        position: $(breakPoint[index]).attr('gradient-position'),
-                        radius: this.radius
+                        color: this.color == undefined ? $(breakPoint[index]).attr('gradient-color') : this.color,
+                        position: this.position == undefined ? $(breakPoint[index]).attr('gradient-position') : this.position,
+                        radius: this.radius,
+                        type: type
                     };
                 });
 
@@ -312,7 +335,7 @@ define(['jquery', 'Util'],
                     self.moveBreakPointEvent(null, this, point[index].x);  //중지점 위치 초기화
                 });
 
-                gradientData = self.getGradientData(point);
+                gradientData = self.getGradientData(point, 'line');
                 self.setBreakPointBar(gradientData);
 
                 breakpoint = $('.breakpoint')[0];
@@ -326,7 +349,7 @@ define(['jquery', 'Util'],
                 var canvas = document.getElementById("gradient-breakpoint-bar");
                 var context = canvas.getContext("2d");
 
-                self.setGradientFillStyle(context, gradientData, 'breakbar');
+                self.setGradientFillStyle(context, gradientData);
                 context.fillRect(0,0,100,20);
             };
 
@@ -376,7 +399,7 @@ define(['jquery', 'Util'],
                     pointArr.push({x: parseInt($(this).attr('gradient-position')), y: 10});
                 });
 
-                gradientData = self.getGradientData(pointArr);
+                gradientData = self.getGradientData(pointArr, 'line');
                 self.setBreakPointBar(gradientData);
             };
 
