@@ -12,11 +12,13 @@ define(['jquery', 'DrawingAction', 'Drawing'],
              * 로컬 파일 다운로드
              */
             this.saveLocalFile = function() {
-                location.href = (tool.getCanvas()).toDataURL('image/png').replace("image/png", "image/octet-stream");
-                console.log((tool.getCanvas()).toDataURL('image/png').replace("image/png", "image/octet-stream"));
+                var aTag = document.createElement('a');
+                aTag.download = 'drawingBoard_img.png';
+                aTag.href = (tool.getCanvas()).toDataURL('image/png').replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+                aTag.click();
             };
 
-            /**
+                /**
              * 내 파일 저장 뷰
              * @param view
              */
@@ -173,7 +175,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         tdFile = $('#td-file-' + fileDataIndex),
                         tdFileName = tdFile.find('p').text();
 
-                    if(event.target.tagName == 'P') {// || event.target.tagName == 'TD') {
+                    if(event.target.tagName == 'P') {
                         // 파일 불러오기
                         $('#myfile-list').find('tr.click').removeClass('click');
                         $(event.currentTarget).addClass('click');
@@ -191,7 +193,27 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         $('#myfile-list').modal('hide');
                     }else if(event.target.className.indexOf("savelocal") > -1) {
                         // 파일 다운로드
-                        //location.href = fileData[fileDataIndex].imgUrl;
+                        var canvas = document.createElement('canvas');
+                        canvas.width = document.getElementById('drawing-canvas').width;
+                        canvas.height = document.getElementById('drawing-canvas').height;
+
+                        var originDataArr = $.extend({}, tool.getData());
+                        var dataArr = self.getConversionJsonToData(fileData[fileDataIndex]);
+                        tool.setCanvas(canvas);
+                        tool.setData(dataArr);
+
+                        var drawingAction = new DrawingAction();
+                        drawingAction.init(tool);
+
+                        drawingAction.drawOrderDrawing('prev', tool.getData().length, false, true);
+
+                        var aTag = document.createElement('a');
+                        aTag.download = tdFileName + '.png';
+                        aTag.href = canvas.toDataURL('image/png').replace(/^data:image\/[^;]*/, 'data:application/octet-stream');
+                        aTag.click();
+
+                        tool.setCanvas(document.getElementById('drawing-canvas'));
+                        tool.setData(originDataArr);
                     }else if(event.target.className.indexOf("editname") > -1) {
                         // 파일 이름변경
                         var updateMyFileInfo = function(tdP, file_id, file_name, old_file_name) {

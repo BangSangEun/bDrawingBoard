@@ -5,12 +5,17 @@ define(['Pen'],
     function(Pen) {
         var Tool = function() {
             var self = this,
+                _canvas = document.getElementById("drawing-canvas"),
                 _current = null,
                 _pen = new Pen(),
                 _data = [];
 
             this.getCanvas = function() {
-                return document.getElementById("drawing-canvas");
+                return _canvas;
+            };
+
+            this.setCanvas = function(canvas) {
+                _canvas = canvas;
             };
 
             this.getContext = function() {
