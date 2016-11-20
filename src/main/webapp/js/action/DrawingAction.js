@@ -8,7 +8,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
             var self = this;
             var paintOption = null;
             var figureData;
-            var lineData;
+            var lineData = [];
             var isMouseDown;
             var gradientAction;
             var selectDrawing = null;
