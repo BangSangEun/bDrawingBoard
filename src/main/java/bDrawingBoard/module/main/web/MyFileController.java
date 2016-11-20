@@ -60,8 +60,34 @@ public class MyFileController {
      * @return
      */
     @RequestMapping("/updateMyFileInfo.do")
-    public @ResponseBody String updateMyFileInfo(@ModelAttribute("myFileInfoVO") MyFileInfoVO myFileInfoVO) {
+    public @ResponseBody String updateMyFileInfo(HttpServletRequest request, HttpSession session) {
+        MyFileInfoVO myFileInfoVO = new MyFileInfoVO();
+        MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
+
+        myFileInfoVO.setMember_id(memberVO.getMember_id());
+        myFileInfoVO.setFile_id(Integer.parseInt(request.getParameter("file_id")));
+        myFileInfoVO.setFile_name(request.getParameter("file_name"));
+
         String result = myFileService.updateMyFileInfo(myFileInfoVO);
+
+        return result;
+    }
+
+    /**
+     * 내 파일 삭제
+     * @param request
+     * @param session
+     * @return
+     */
+    @RequestMapping("/deleteMyFileInfo.do")
+    public @ResponseBody String deleteMyFileInfo(HttpServletRequest request, HttpSession session) {
+        MyFileInfoVO myFileInfoVO = new MyFileInfoVO();
+        MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
+
+        myFileInfoVO.setMember_id(memberVO.getMember_id());
+        myFileInfoVO.setFile_id(Integer.parseInt(request.getParameter("file_id")));
+
+        String result = myFileService.deleteMyFileInfo(myFileInfoVO);
 
         return result;
     }

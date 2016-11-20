@@ -66,4 +66,15 @@ public class MyFileServiceImpl implements MyFileService {
 
         return result;
     }
+
+    public String deleteMyFileInfo(MyFileInfoVO myFileInfoVO) {
+        String result = "success";
+        int myfileUpdate = myFileDAO.deleteMyFileInfo(myFileInfoVO);
+
+        if(myfileUpdate != 1) {
+            result = "fail";
+        }
+
+        return result;
+    }
 }

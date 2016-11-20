@@ -167,8 +167,9 @@ define(['jquery', 'DrawingAction', 'Drawing'],
              */
             this.myFileListEvent = function(event) {
                 if(event.type == 'mousedown') {
-                    var fileDataIndex = $(event.target).parents('td').attr('id') == undefined ? $(event.target).attr('id').split('td-file-')[1] : $(event.target).parents('td').attr('id').split('td-file-')[1];
-                    console.log(event);
+                    var fileDataIndex = $(event.target).parents('td').attr('id') == undefined ? $(event.target).attr('id').split('td-file-')[1] : $(event.target).parents('td').attr('id').split('td-file-')[1],
+                        tdFile = $('#td-file-' + fileDataIndex),
+                        tdFileName = tdFile.find('p').text();
 
                     if(event.target.tagName == 'P') {// || event.target.tagName == 'TD') {
                         // 파일 불러오기
@@ -191,9 +192,6 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         //location.href = fileData[fileDataIndex].imgUrl;
                     }else if(event.target.className.indexOf("editname") > -1) {
                         // 파일 이름변경
-                        var tdFile = $('#td-file-' + fileDataIndex),
-                            tdFileName = tdFile.find('p').text();
-
                         var updateMyFileInfo = function(tdP, file_id, file_name, old_file_name) {
                             $.ajax({
                                 type: 'POST',
@@ -221,7 +219,21 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         });
                     }else if(event.target.className.indexOf("drawclear") > -1) {
                         // 파일 삭제
-
+                        if(confirm("파일을 삭제하겠습니까?")) {
+                            $.ajax({
+                                type: 'POST',
+                                url: '/deleteMyFileInfo.do',
+                                data : {"file_id" : fileDataIndex},
+                                dataType: 'text',
+                                success: function(result) {
+                                    if (result == "success") {
+                                        tdFile.parent('tr').hide();
+                                    }else {
+                                        alert("파일 삭제에 실패하였습니다.");
+                                    }
+                                }
+                            });
+                        }
                     }
                 }else if(event.type == 'mouseover') {
                     $('#myfile-list').find('tr.on').removeClass('on');

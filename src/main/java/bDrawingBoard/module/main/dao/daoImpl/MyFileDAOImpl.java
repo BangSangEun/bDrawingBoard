@@ -28,4 +28,8 @@ public class MyFileDAOImpl implements MyFileDAO {
     public int updateMyFileInfo(MyFileInfoVO myFileInfoVO) {
         return sqlSession.getMapper(MyFileDAO.class).updateMyFileInfo(myFileInfoVO);
     }
+
+    public int deleteMyFileInfo(MyFileInfoVO myFileInfoVO) {
+        return sqlSession.getMapper(MyFileDAO.class).deleteMyFileInfo(myFileInfoVO);
+    }
 }

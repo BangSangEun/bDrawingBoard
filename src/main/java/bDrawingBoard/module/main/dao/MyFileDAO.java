@@ -26,4 +26,10 @@ public interface MyFileDAO {
      * @return
      */
     public int updateMyFileInfo(MyFileInfoVO myFileInfoVO);
+
+    /**
+     * 내 파일 삭제
+     * @return
+     */
+    public int deleteMyFileInfo(MyFileInfoVO myFileInfoVO);
 }

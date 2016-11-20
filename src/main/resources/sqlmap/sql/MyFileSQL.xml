@@ -42,4 +42,11 @@
 		WHERE	member_id = #{member_id}
 		AND		file_id = #{file_id}
 	</update>
+
+	<delete id="deleteMyFileInfo" parameterType="MyFileInfoVO">
+		/* 내 파일 삭제 */
+		DELETE FROM	myfile_info
+		WHERE	member_id = #{member_id}
+		AND		file_id = #{file_id}
+	</delete>
 </mapper>

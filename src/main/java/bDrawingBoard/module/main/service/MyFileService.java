@@ -27,4 +27,11 @@ public interface MyFileService {
      * @return
      */
     public String updateMyFileInfo(MyFileInfoVO myFileInfoVO);
+
+    /**
+     * 내 파일 삭제
+     * @param myFileInfoVO
+     * @return
+     */
+    public String deleteMyFileInfo(MyFileInfoVO myFileInfoVO);
 }
