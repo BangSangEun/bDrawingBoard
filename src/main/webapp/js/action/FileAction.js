@@ -197,7 +197,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         canvas.width = document.getElementById('drawing-canvas').width;
                         canvas.height = document.getElementById('drawing-canvas').height;
 
-                        var originDataArr = $.extend({}, tool.getData());
+                        var originDataArr = $.extend([], tool.getData());
                         var dataArr = self.getConversionJsonToData(fileData[fileDataIndex]);
                         tool.setCanvas(canvas);
                         tool.setData(dataArr);
