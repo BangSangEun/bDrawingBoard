@@ -240,8 +240,10 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param drawing : 그림 객체
              * @param isSaveState : 데이터 임시 저장 상태
              */
-            this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, isMoveFigure, lineDataIndex) {
-                self.drawOrderDrawing('prev', index, false, true);
+            this.drawDrawingObject = function(drawingType, event, index, drawing, isSaveState, isMoveFigure, lineDataIndex, isDrawPrev) {
+                if(isDrawPrev || isDrawPrev == undefined) {
+                    self.drawOrderDrawing('prev', index, false, true);
+                }
 
                 if(drawingType == 'line') {
                     if(event == null) {
@@ -413,7 +415,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         gradientAction.setGradientFillStyle(tool.getContext(), gradientData);
                         drawing.setFillStyle(tool.getContext().fillStyle);
                     }
-                    self.drawDrawingObject('figure', null, index, drawing, true, false);
+                    self.drawDrawingObject('figure', null, index, drawing, true, false, null, true);
 
                     tool.getData()[index] = figureData;
                     tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
@@ -579,7 +581,11 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         }
 
                         for(var i=0; i<drawing.getData().length; i++) {
-                            self.drawDrawingObject('line', null, index, drawing, null, null, i);
+                            isDrawPrev = false;
+                            if(i == 0) {
+                                isDrawPrev = true;
+                            }
+                            self.drawDrawingObject('line', null, index, drawing, null, null, i, isDrawPrev);
                         }
 
                         tool.getData()[index].setData(movePointArr);
@@ -593,7 +599,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             drawing.setFillStyle(tool.getContext().fillStyle);
                         }
 
-                        self.drawDrawingObject('figure', null, index, drawing, true, true);
+                        self.drawDrawingObject('figure', null, index, drawing, true, true, null, true);
                         tool.getData()[index] = figureData;
                     }
 
