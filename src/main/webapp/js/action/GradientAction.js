@@ -171,20 +171,21 @@ define(['jquery', 'Util'],
              * @returns {*}
              */
             this.getTypeGradientData = function(objPoint, objSize, drawing) {
-                var type, pointArr, gradientData, gradientColor, gradientPosition;
+                var type, pointArr, gradientData, gradientColor, gradientPosition, gradientDegree;
 
                 if(drawing != undefined && drawing.getData().figureFillStyle != undefined) {
                     type = drawing.getData().gradientFillType;
                     gradientColor = drawing.getData().gradientColor;
                     gradientPosition = drawing.getData().gradientPosition;
+                    gradientDegree = drawing.getData().gradientDegree == undefined ? self.getDegree() : drawing.getData().gradientDegree;
                 }else {
                     type = self.getType();
                 }
 
                 if(type == 'line') {
-                    pointArr = self.getDegreePoint(self.getDegree(), objPoint, objSize, gradientColor, gradientPosition);
+                    pointArr = self.getDegreePoint(gradientDegree, objPoint, objSize, gradientColor, gradientPosition);
                 }else if(type == 'radial') {
-                    pointArr = self.getRadialDirectionPoint(self.getDegree(), objPoint, objSize, gradientColor, gradientPosition);
+                    pointArr = self.getRadialDirectionPoint(gradientDegree, objPoint, objSize, gradientColor, gradientPosition);
                 }
 
                 gradientData = self.getGradientData(pointArr, type);

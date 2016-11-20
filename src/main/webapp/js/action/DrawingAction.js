@@ -271,7 +271,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
              * @param event
              */
             this.drawFigureEvent = function(event, drawing, isSaveState, isMoveFigure) {
-                var figureType, figureSize, figureFillStyle, gradientFillType, gradientColor, gradientPosition;
+                var figureType, figureSize, figureFillStyle, gradientFillType, gradientColor, gradientPosition, gradientDegree;
                 var newX, newY, oldX, oldY;
                 var fillStyle, lineWidth, strokeStyle;
 
@@ -306,6 +306,7 @@ define(['jquery', 'GradientAction', 'Drawing'],
                             gradientFillType = figure.getData().gradientFillType;
                             gradientColor = figure.getData().gradientColor;
                             gradientPosition = figure.getData().gradientPosition;
+                            gradientDegree = figure.getData().gradientDegree;
 
                             if(!isMoveFigure || gradientFillType == undefined) {
                                 gradientFillType = gradientAction.getType();
@@ -319,7 +320,10 @@ define(['jquery', 'GradientAction', 'Drawing'],
                                 gradientPosition = [$($('.breakpoint')[0]).attr('gradient-position'), $($('.breakpoint')[1]).attr('gradient-position')];
                                 figure.getData().gradientPosition = gradientPosition;
                             }
-
+                            if(!isMoveFigure || gradientDegree == undefined) {
+                                gradientDegree = gradientAction.getDegree();
+                                figure.getData().gradientDegree = gradientDegree;
+                            }
                             var gradientData = gradientAction.getTypeGradientData(figure.getData().coordinate, figureSize, figure);
                             gradientAction.setGradientFillStyle(tool.getContext(), gradientData);
                             fillStyle = tool.getContext().fillStyle;
@@ -363,7 +367,8 @@ define(['jquery', 'GradientAction', 'Drawing'],
                         figureFillStyle : figureFillStyle,
                         gradientFillType : gradientFillType,
                         gradientColor : gradientColor,
-                        gradientPosition : gradientPosition
+                        gradientPosition : gradientPosition,
+                        gradientDegree : gradientDegree
                     });
                     figureData.setStrokeStyle(tool.getContext().strokeStyle);
                     figureData.setLineWidth(tool.getContext().lineWidth);
