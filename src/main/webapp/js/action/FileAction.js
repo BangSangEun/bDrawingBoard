@@ -61,10 +61,10 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         dataType: 'text',
                         success: function(result) {
                             if(result == 'success') {
-                                alert("파일 저장 완료");
+                                alert("파일 저장이 완료되었습니다.");
                                 self.myFileSaveView(false);
                             }else {
-                                alert("파일 저장 실패");
+                                alert("파일 저장에 실패하였습니다.");
                             }
                         },
                         error: function() {
@@ -170,7 +170,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                     var fileDataIndex = $(event.target).parents('td').attr('id') == undefined ? $(event.target).attr('id').split('td-file-')[1] : $(event.target).parents('td').attr('id').split('td-file-')[1];
                     console.log(event);
 
-                    if(event.target.tagName == 'P' || event.target.tagName == 'TD') {
+                    if(event.target.tagName == 'P') {// || event.target.tagName == 'TD') {
                         // 파일 불러오기
                         $('#myfile-list').find('tr.click').removeClass('click');
                         $(event.currentTarget).addClass('click');
@@ -191,7 +191,34 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         //location.href = fileData[fileDataIndex].imgUrl;
                     }else if(event.target.className.indexOf("editname") > -1) {
                         // 파일 이름변경
+                        var tdFile = $('#td-file-' + fileDataIndex),
+                            tdFileName = tdFile.find('p').text();
 
+                        var updateMyFileInfo = function(tdP, file_id, file_name, old_file_name) {
+                            $.ajax({
+                                type: 'POST',
+                                url: '/updateMyFileInfo.do',
+                                data : {"file_id" : file_id, "file_name" : file_name},
+                                dataType: 'text',
+                                success: function(result) {
+                                    if (result == "success") {
+                                        tdP.html('<i class="tool-ico myfile-ico"></i>' + file_name);
+                                    }else {
+                                        alert("파일명 수정이 실패하였습니다.");
+                                        tdP.html('<i class="tool-ico myfile-ico"></i>' + old_file_name);
+                                    }
+                                }
+                            });
+                        };
+
+                        tdFile.find('p').html('<i class="tool-ico myfile-ico"></i><input type="text" class="td-file-edit" value="'+ tdFileName +'" />');
+
+                        tdFile.find('p > input').on('keydown blur', function(event) {
+                            if(event.type == 'keydown' && event.keyCode == 13 //enter key
+                                || event.type == 'blur') {
+                                updateMyFileInfo(tdFile.find('p'), fileDataIndex, $('.td-file-edit').val(), tdFileName);
+                            }
+                        });
                     }else if(event.target.className.indexOf("drawclear") > -1) {
                         // 파일 삭제
 
