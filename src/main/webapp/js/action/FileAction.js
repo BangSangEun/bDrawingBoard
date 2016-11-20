@@ -90,6 +90,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         jsonData.data = data.getData();
                         jsonData.strokeStyle = data.getStrokeStyle();
                         jsonData.lineWidth = data.getLineWidth();
+                        jsonData.lineCap = data.getLineCap();
                         jsonData.fillStyle = data.getFillStyle();
 
                         jsonArr.push($.extend({}, jsonData));
@@ -113,6 +114,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                     dataArr[i].setData(dataArr[i].data);
                     dataArr[i].setStrokeStyle(dataArr[i].strokeStyle);
                     dataArr[i].setLineWidth(dataArr[i].lineWidth);
+                    dataArr[i].setLineCap(dataArr[i].lineCap);
                     dataArr[i].setFillStyle(dataArr[i].fillStyle);
                 }
 
