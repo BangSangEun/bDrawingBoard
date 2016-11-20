@@ -25,7 +25,7 @@ a {text-decoration: none !important;}
 }
 #top-panel .navi-menu ul {line-height: 40px;}
 #top-panel .navi-menu ul li {display: inline-block; text-align: center; font-weight: bold; vertical-align: bottom; margin: 0 10px; font-size: 10pt; font-color: #333333; cursor: pointer;}
-#top-panel .navi-menu ul li:hover {color: #fff; opacity:0.6}
+#top-panel .navi-menu ul li:hover {color: #FF9E1F;}
 
 #top-panel .navi-menu ul.navi-menu-left {float: left;}
 #top-panel .navi-menu ul.navi-menu-right {right: 0; }
