@@ -89,7 +89,7 @@ define(['jquery', 'Tool', 'Util', 'DrawingEventHandler', 'FileEventHandler'],
 
                 tool.getPen().setSize($('.penSize-pallet:visible').find('select option:eq(0)').val());
                 tool.getPen().setBrush($('#brush-shape').find('select option:eq(0)').val());
-                tool.getPen().setFigure($('#figure-shape').find('select option:eq(0)').val());
+                tool.getPen().setShape($('#shape-shape').find('select option:eq(0)').val());
                 $(tool.getCanvas()).css('cursor', 'url(/image/icon/cursor/pencil.cur) 4 12, auto');
             };
         };

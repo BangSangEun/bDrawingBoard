@@ -11,14 +11,14 @@ public interface MyFileDAO {
      * 내 파일 목록 조회
      * @return
      */
-    public ArrayList<MyFileInfoVO> getMyFileInfoList(String member_id);
+    public ArrayList<MyFileInfoVO> getFileList(String member_id);
 
     /**
      * 내 파일 저장
      * @param myFileInfoVO
      * @return
      */
-    public int setMyFileInfo(MyFileInfoVO myFileInfoVO);
+    public int save(MyFileInfoVO myFileInfoVO);
 
     /**
      * 내 파일 수정

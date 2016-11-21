@@ -105,11 +105,11 @@ canvas {display: block; border:1px solid #B8B6B8;}
 
 .pencil-ico {background-image: url("../image/icon/pencil_ico.png"); }
 .brush-ico {background-image: url("../image/icon/brush_ico.png");}
-.figure-ico {background-image: url("../image/icon/figure_ico.png");}
+.shape-ico {background-image: url("../image/icon/shape_ico.png");}
 .paint-ico {background-image: url("../image/icon/paint_ico.png");}
 .eraser-ico {background-image: url("../image/icon/eraser_ico.png");}
 .text-ico {background-image: url("../image/icon/text_ico.png");}
-.selectDrawing-ico {background-image: url("../image/icon/area_ico.png");}
+.selectFigure-ico {background-image: url("../image/icon/area_ico.png");}
 
 /* ---------- additional-tool icon */
 .shape_circle-ico {background-image: url("../image/icon/shape_circle.png");}

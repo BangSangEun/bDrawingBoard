@@ -14,8 +14,8 @@ public class LoginDAOImpl implements LoginDAO {
     @Autowired
     SqlSessionTemplate sqlSession;
 
-    public int getMemberInfoCheck(MemberVO memberVO) {
-        return sqlSession.getMapper(LoginDAO.class).getMemberInfoCheck(memberVO);
+    public int checkMemberInfo(MemberVO memberVO) {
+        return sqlSession.getMapper(LoginDAO.class).checkMemberInfo(memberVO);
     }
 
     public MemberVO getMemberInfo(MemberVO memberVO) {

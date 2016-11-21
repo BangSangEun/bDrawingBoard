@@ -3,7 +3,7 @@
  * @constructor
  */
 define([], function() {
-    var Drawing = function() {
+    var Figure = function() {
         var _type,
             _data = {},
             _strokeStyle,
@@ -69,7 +69,7 @@ define([], function() {
         };
     };
 
-    return Drawing;
+    return Figure;
 });
 
 

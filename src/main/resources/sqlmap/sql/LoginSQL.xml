@@ -5,7 +5,7 @@
 
 <mapper namespace="bDrawingBoard.module.login.dao.LoginDAO">
 
-	<select id="getMemberInfoCheck" parameterType="MemberVO" resultType="Integer">
+	<select id="checkMemberInfo" parameterType="MemberVO" resultType="Integer">
 		/* 로그인 정보 확인 */
 		SELECT	COUNT(*)
 		FROM	member

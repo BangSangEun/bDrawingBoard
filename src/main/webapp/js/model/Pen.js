@@ -7,7 +7,7 @@ define([],
             var _size,
                 _color,
                 _brush,
-                _figure,
+                _shape,
                 _oldPoint = {x: null, y: null},
                 _newPoint = {x: null, y: null},
                 _imageData;
@@ -36,12 +36,12 @@ define([],
                 _brush = brush;
             };
 
-            this.getFigure = function() {
-                return _figure;
+            this.getShape = function() {
+                return _shape;
             };
 
-            this.setFigure = function(figure) {
-                _figure = figure;
+            this.setShape = function(shape) {
+                _shape = shape;
             };
 
             this.getOldPoint = function() {

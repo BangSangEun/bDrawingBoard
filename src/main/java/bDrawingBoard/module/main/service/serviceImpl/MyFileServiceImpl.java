@@ -19,12 +19,12 @@ public class MyFileServiceImpl implements MyFileService {
     @Autowired
     MyFileDAO myFileDAO;
 
-    public String getMyFileInfoList(String member_id) {
+    public String getFileList(String member_id) {
         JSONObject resultObj = new JSONObject();
         JSONArray tempArray = new JSONArray();
 
         try {
-            ArrayList<MyFileInfoVO> myFileInfoList = myFileDAO.getMyFileInfoList(member_id);
+            ArrayList<MyFileInfoVO> myFileInfoList = myFileDAO.getFileList(member_id);
 
             for(int i=0; i<myFileInfoList.size(); i++) {
                 JSONObject tempObj = new JSONObject();
@@ -45,9 +45,9 @@ public class MyFileServiceImpl implements MyFileService {
         return resultObj.toString();
     }
 
-    public String setMyFileInfo(MyFileInfoVO myFileInfoVO) {
+    public String save(MyFileInfoVO myFileInfoVO) {
         String result = "success";
-        int myfileSave = myFileDAO.setMyFileInfo(myFileInfoVO);  //내 파일 저장
+        int myfileSave = myFileDAO.save(myFileInfoVO);  //내 파일 저장
 
         if(myfileSave != 1) {
             result = "fail";

@@ -2,8 +2,8 @@
  * 파일 관련 Action
  */
 
-define(['jquery', 'DrawingAction', 'Drawing'],
-    function($, DrawingAction, Drawing) {
+define(['jquery', 'DrawingAction', 'Figure'],
+    function($, DrawingAction, Figure) {
         var FileAction = function(tool) {
             var self = this;
             var fileData = {};
@@ -22,7 +22,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
              * 내 파일 저장 뷰
              * @param view
              */
-            this.myFileSaveView = function(view) {
+            this.showSaveDialog = function(view) {
                 if(view) {
                     $('#myfile-save').modal();
                 }else {
@@ -35,10 +35,10 @@ define(['jquery', 'DrawingAction', 'Drawing'],
              * 내 파일 목록 뷰
              * @param view
              */
-            this.myFileListView = function(view) {
+            this.showFileListDialog = function(view) {
                 if(view) {
                     $('#myfile-list').modal();
-                    self.myFileListRead();
+                    self.getFileList();
                 }else {
                     $('#myfile-list .div-list-file table').find('tr').removeClass('on');
                     $('#myfile-list .div-list-file table').find('tr').removeClass('click');
@@ -50,7 +50,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
              * 내 파일 저장
              * @param event
              */
-            this.myFileSave = function(event) {
+            this.doSaveFile = function(event) {
                 var file_name = $('#filesave-name').val();
 
                 if(file_name != "") {
@@ -58,13 +58,13 @@ define(['jquery', 'DrawingAction', 'Drawing'],
 
                     $.ajax({
                         type: 'POST',
-                        url: '/setMyFileInfo.do',
+                        url: '/save.do',
                         data: {"file_name": file_name, "file_data": file_data},
                         dataType: 'text',
                         success: function(result) {
                             if(result == 'success') {
                                 alert("파일 저장이 완료되었습니다.");
-                                self.myFileSaveView(false);
+                                self.showSaveDialog(false);
                             }else {
                                 alert("파일 저장에 실패하였습니다.");
                             }
@@ -79,7 +79,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
             };
 
             /**
-             * drawing 객체 배열을 json 형태로 변환
+             * figure 객체 배열을 json 형태로 변환
              * @param dataArr
              * @returns {Array}
              */
@@ -103,14 +103,14 @@ define(['jquery', 'DrawingAction', 'Drawing'],
             };
 
             /**
-             * json 형태를 Drawing 객체 배열로 변환
+             * json 형태를 Figure 객체 배열로 변환
              * @param jsonData
              */
             this.getConversionJsonToData = function(jsonData) {
                 var dataArr = JSON.parse(jsonData);
 
                 for(var i=0; i<dataArr.length; i++) {
-                    dataArr[i] = $.extend(new Drawing, dataArr[i]);
+                    dataArr[i] = $.extend(new Figure, dataArr[i]);
 
                     dataArr[i].setType(dataArr[i].type);
                     dataArr[i].setData(dataArr[i].data);
@@ -126,10 +126,10 @@ define(['jquery', 'DrawingAction', 'Drawing'],
             /**
              * 내 파일 목록 불러오기
              */
-            this.myFileListRead = function() {
+            this.getFileList = function() {
                 $.ajax({
                     type: 'GET',
-                    url: '/getMyFileInfoList.do',
+                    url: '/getFileList.do',
                     dataType: 'json',
                     success: function(result) {
                         var appendHtml = "";
@@ -155,7 +155,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                             // 내 파일 목록 이벤트
                             var myfile_list_tr = $('#myfile-list .div-list-file table tr');
                             myfile_list_tr.on('mousedown mouseover mouseup mousemove', function(event) {
-                                self.myFileListEvent(event);
+                                self.onFileListEvent(event);
                             });
                         }
                     },
@@ -169,7 +169,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
              * 내 파일 목록 이벤트
              * @param event
              */
-            this.myFileListEvent = function(event) {
+            this.onFileListEvent = function(event) {
                 if(event.type == 'mousedown') {
                     var fileDataIndex = $(event.target).parents('td').attr('id') == undefined ? $(event.target).attr('id').split('td-file-')[1] : $(event.target).parents('td').attr('id').split('td-file-')[1],
                         tdFile = $('#td-file-' + fileDataIndex),
@@ -187,7 +187,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         drawingAction.init(tool);
 
                         tool.getContext().clearRect(0, 0, tool.getCanvas().width, tool.getCanvas().height);
-                        drawingAction.drawOrderDrawing('prev', tool.getData().length, false, true);
+                        drawingAction.drawFigureByOrder('prev', tool.getData().length, false, true);
                         tool.getPen().setImageData(tool.getContext().getImageData(0,0,tool.getCanvas().width,tool.getCanvas().height));
 
                         $('#myfile-list').modal('hide');
@@ -205,7 +205,7 @@ define(['jquery', 'DrawingAction', 'Drawing'],
                         var drawingAction = new DrawingAction();
                         drawingAction.init(tool);
 
-                        drawingAction.drawOrderDrawing('prev', tool.getData().length, false, true);
+                        drawingAction.drawFigureByOrder('prev', tool.getData().length, false, true);
 
                         var aTag = document.createElement('a');
                         aTag.download = tdFileName + '.png';

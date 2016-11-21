@@ -15,14 +15,12 @@ define(['jquery', 'LoginAction'],
 
                 $('.login-btn').on('click', function (event) {
                     if (event.target.className.indexOf('btn-login') > -1) {
-                        loginAction.goLogin();
-                    } else {
-                        loginAction.goJoin();
+                        loginAction.login();
                     }
                 });
 
                 $('.btn-logout').on('click', function (event) {
-                    loginAction.goLogout();
+                    loginAction.logout();
                 });
             };
         };

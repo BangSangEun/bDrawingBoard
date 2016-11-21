@@ -10,7 +10,7 @@ define(['jquery'],
             /**
              * 로그인
              */
-            this.goLogin = function () {
+            this.login = function () {
                 var vali_obj = ['member_id', 'member_pw'];
                 for (var i = 0; i < vali_obj.length; i++) {
                     var obj = $("input[name=" + vali_obj[i] + "]");
@@ -23,7 +23,7 @@ define(['jquery'],
 
                 $.ajax({
                     type: 'POST',
-                    url: '/login/memberInfoCheck.do',
+                    url: '/login/checkMemberInfo.do',
                     data: $('#loginForm').serialize(),
                     dataType: 'text',
                     success: function (result) {
@@ -45,16 +45,9 @@ define(['jquery'],
             /**
              * 로그아웃
              */
-            this.goLogout = function () {
-                location.href = "/goLogout.do";
+            this.logout = function () {
+                location.href = "/doLogout.do";
             }
-
-            /**
-             * 회원가입 페이지 이동
-             */
-            this.goJoin = function () {
-                //회원가입 페이지 이동
-            };
         };
 
         return LoginAction;

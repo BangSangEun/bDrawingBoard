@@ -19,8 +19,8 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
 		 */
 		if(memberVO == null) {
 		    if(!(request.getServletPath().equals("/login.do")
-		    		|| request.getServletPath().equals("/goLogin.do")
-                    || request.getServletPath().equals("/goLogout.do"))) {
+		    		|| request.getServletPath().equals("/doLogin.do")
+                    || request.getServletPath().equals("/doLogout.do"))) {
                 /**
                  * 비로그인 처리
                  */

@@ -14,8 +14,8 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     LoginDAO loginDAO;
 
-    public int getMemberInfoCheck(MemberVO memberVO) {
-        return loginDAO.getMemberInfoCheck(memberVO);
+    public int checkMemberInfo(MemberVO memberVO) {
+        return loginDAO.checkMemberInfo(memberVO);
     }
 
     public MemberVO getMemberInfo(MemberVO memberVO) {

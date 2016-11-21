@@ -15,7 +15,7 @@ define(['jquery', 'FileAction'],
                 fileAction = new FileAction(tool);
 
                 $('#myfile-list').on('hide.bs.modal', function () {
-                    fileAction.myFileListView(false);
+                    fileAction.showFileListDialog(false);
                 });
             };
 
@@ -29,7 +29,7 @@ define(['jquery', 'FileAction'],
                 if($(event.target).parents('#myfile-save').length > 0) {
                     if (event.type == 'mousedown') {
                         if (event.target.id == 'myfile-save-btn') {
-                            fileAction.myFileSave(event);
+                            fileAction.doSaveFile(event);
                         }
                     }
                 }else if(event.target.id.indexOf('menu-') > -1) {
@@ -39,10 +39,10 @@ define(['jquery', 'FileAction'],
                             fileAction.saveLocalFile();
                         } else if (event.target.id == 'menu-saveFile') {
                             //내 파일 저장 뷰
-                            fileAction.myFileSaveView(true);
+                            fileAction.showSaveDialog(true);
                         } else if (event.target.id == 'menu-myFileList') {
                             //내 파일 목록 뷰
-                            fileAction.myFileListView(true);
+                            fileAction.showFileListDialog(true);
                         }
                     }
                 }

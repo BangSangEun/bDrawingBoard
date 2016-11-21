@@ -12,7 +12,7 @@ public interface LoginService {
      * @param memberVO
      * @return
      */
-    public int getMemberInfoCheck(MemberVO memberVO);
+    public int checkMemberInfo(MemberVO memberVO);
 
     /**
      * 회원 정보 조회

@@ -22,7 +22,7 @@ public class LoginController {
     LoginService loginService;
 
     @RequestMapping("/login.do")
-    public String loginView() {
+    public String redirectLogin() {
         return "login";
     }
 
@@ -31,11 +31,11 @@ public class LoginController {
      * @param memberVO
      * @return
      */
-    @RequestMapping("/login/memberInfoCheck.do")
-    public @ResponseBody String getMemberInfoCheck(@ModelAttribute("memberVO") MemberVO memberVO) {
+    @RequestMapping("/login/checkMemberInfo.do")
+    public @ResponseBody String checkMemberInfo(@ModelAttribute("memberVO") MemberVO memberVO) {
         String result = "success";
 
-        int checkVal = loginService.getMemberInfoCheck(memberVO);
+        int checkVal = loginService.checkMemberInfo(memberVO);
         if(checkVal < 1) {
             result = "fail";
         }
@@ -66,8 +66,8 @@ public class LoginController {
      * @param session
      * @return
      */
-    @RequestMapping("/goLogin.do")
-    public String loginHandler(@ModelAttribute("memberVO") MemberVO memberVO, HttpSession session) {
+    @RequestMapping("/doLogin.do")
+    public String doLogin(@ModelAttribute("memberVO") MemberVO memberVO, HttpSession session) {
         memberVO = loginService.getMemberInfo(memberVO);
 
         if(memberVO != null) {
@@ -83,8 +83,8 @@ public class LoginController {
      * @param session
      * @return
      */
-    @RequestMapping("/goLogout.do")
-    public String logoutHandler(HttpSession session) {
+    @RequestMapping("/doLogout.do")
+    public String doLogout(HttpSession session) {
         session.invalidate();
 
         return "redirect:/";

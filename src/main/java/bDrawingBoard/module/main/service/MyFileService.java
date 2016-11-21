@@ -12,14 +12,14 @@ public interface MyFileService {
      * @param member_id
      * @return
      */
-    public String getMyFileInfoList(String member_id);
+    public String getFileList(String member_id);
 
     /**
      * 내 파일 저장
      * @param myFileInfoVO
      * @return
      */
-    public String setMyFileInfo(MyFileInfoVO myFileInfoVO);
+    public String save(MyFileInfoVO myFileInfoVO);
 
     /**
      * 내 파일 정보 수정

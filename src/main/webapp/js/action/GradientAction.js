@@ -173,7 +173,7 @@ define(['jquery', 'Util'],
             this.getTypeGradientData = function(objPoint, objSize, drawing) {
                 var type, pointArr, gradientData, gradientColor, gradientPosition, gradientDegree;
 
-                if(drawing != undefined && drawing.getData().figureFillStyle != undefined) {
+                if(drawing != undefined && drawing.getData().shapeFillStyle != undefined) {
                     type = drawing.getData().gradientFillType;
                     gradientColor = drawing.getData().gradientColor;
                     gradientPosition = drawing.getData().gradientPosition;

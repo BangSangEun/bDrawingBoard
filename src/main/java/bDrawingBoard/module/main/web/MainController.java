@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class MainController {
 
     @RequestMapping("/main.do")
-    public String mainView() {
+    public String redirectMain() {
         return "main";
     }
 }

@@ -27,40 +27,40 @@ define(['jquery', 'DrawingAction', 'GradientAction'],
             this.setHandler = function(event) {
                 if(event.target.id == 'drawing-canvas') {
                     //캔바스 그리기 이벤트
-                    drawingAction.canvasEvent(event);
+                    drawingAction.onDrawingEvent(event);
                 }else if($(event.target).parents('div#gradient-option-view').length > 0) {
                     //그라데이션 옵션 이벤트
                     gradientAction.setHandler(event);
                 }else if(event.type == 'keydown') {
                     if(event.keyCode == 46) { //delete key
                         //선택된 개체 삭제
-                        drawingAction.deleteSelectDrawing(event);
+                        drawingAction.deleteSelectFigure(event);
                     }
                 }else {
                     if(event.type == 'mousedown') {
                         if(event.target.id.indexOf('tool') > -1) {
                             //툴 선택
-                            drawingAction.toolSelect(event);
+                            drawingAction.selectTool(event);
                         }else if($(event.target).parents('div.color-pallet').length > 0) {
                             //색상 선택
-                            drawingAction.colorSelect(event);
+                            drawingAction.selectColor(event);
                         }else if(event.target.id.indexOf('drawClear') > -1) {
                             //새로그리기 선택
-                            drawingAction.cleaerCanvas();
+                            drawingAction.clearCanvas();
                         }
                     }else if(event.type == 'change') {
                         if($(event.target).parents('div#brush-shape').length > 0) {
                             //브러쉬 모양 선택
-                            drawingAction.brushSelect(event);
+                            drawingAction.selectBrush(event);
                         }else if($(event.target).parents('div[id$=penSize]').length > 0) {
                             //펜 사이즈 선택
-                            drawingAction.penSizeSelect(event);
-                        }else if($(event.target).parents('div#figure-shape').length > 0) {
+                            drawingAction.selectPenSize(event);
+                        }else if($(event.target).parents('div#shape-shape').length > 0) {
                             //도형 선택
-                            drawingAction.figureSelect(event);
+                            drawingAction.selectShape(event);
                         }else if($(event.target).parents('div#paint-option').length > 0) {
                             //채우기 옵션 선택
-                            drawingAction.paintOptionSelect(event);
+                            drawingAction.selectFillOption(event);
                         }
                     }
                 }

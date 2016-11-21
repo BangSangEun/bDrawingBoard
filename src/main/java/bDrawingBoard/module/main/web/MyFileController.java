@@ -26,11 +26,11 @@ public class MyFileController {
      * @param session
      * @return
      */
-    @RequestMapping("/getMyFileInfoList.do")
-    public @ResponseBody String getMyFileInfoList(HttpSession session) {
+    @RequestMapping("/getFileList.do")
+    public @ResponseBody String getFileList(HttpSession session) {
         MemberVO memberVO =  (MemberVO)session.getAttribute("memberVO");
 
-        String result = myFileService.getMyFileInfoList(memberVO.getMember_id());
+        String result = myFileService.getFileList(memberVO.getMember_id());
 
         return result;
     }
@@ -41,8 +41,8 @@ public class MyFileController {
      * @param session
      * @return
      */
-    @RequestMapping("/setMyFileInfo.do")
-    public @ResponseBody String setMyFileInfo(HttpServletRequest request, HttpSession session) {
+    @RequestMapping("/save.do")
+    public @ResponseBody String save(HttpServletRequest request, HttpSession session) {
         MyFileInfoVO myFileInfoVO = new MyFileInfoVO();
         MemberVO memberVO = (MemberVO)session.getAttribute("memberVO");
 
@@ -50,7 +50,7 @@ public class MyFileController {
         myFileInfoVO.setFile_name(request.getParameter("file_name"));
         myFileInfoVO.setFile_data(request.getParameter("file_data")); //array data
 
-        String result = myFileService.setMyFileInfo(myFileInfoVO);
+        String result = myFileService.save(myFileInfoVO);
         return result;
     }
 
