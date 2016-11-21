@@ -221,6 +221,10 @@ define(['jquery', 'Util'],
                     //왼쪽 아래 모서리
                     startPoint.x = x - objSize;
                     startPoint.y = y + objSize;
+                }else {
+                    //그외 각도 값은 degree = 0 으로 처리
+                    startPoint.x = x;
+                    startPoint.y = y;
                 }
 
                 startPoint.radius = 0;
