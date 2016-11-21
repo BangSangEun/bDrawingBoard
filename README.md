@@ -197,7 +197,7 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 <br/>
 ### 채우기(그라데이션) 기능 시나리오
 
-![java_diagram_draw_2](http://i.imgur.com/j0MN63a.png)
+![java_diagram_draw_2](http://i.imgur.com/4eYVBWg.png)
 
 <br/>
 ### 파일 저장 기능 시나리오
