@@ -6,7 +6,7 @@
 <configuration>
 	<typeAliases>
 		<typeAlias alias="MemberVO" type="bDrawingBoard.module.login.vo.MemberVO"/>
-		<typeAlias alias="MyFileInfoVO" type="bDrawingBoard.module.main.vo.MyFileInfoVO"/>
+		<typeAlias alias="MyFileInfoVO" type="bDrawingBoard.module.myfile.vo.MyFileInfoVO"/>
 	</typeAliases>
 
 </configuration>

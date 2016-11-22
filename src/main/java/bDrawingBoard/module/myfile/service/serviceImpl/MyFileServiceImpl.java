@@ -1,8 +1,8 @@
-package bDrawingBoard.module.main.service.serviceImpl;
+package bDrawingBoard.module.myfile.service.serviceImpl;
 
-import bDrawingBoard.module.main.dao.MyFileDAO;
-import bDrawingBoard.module.main.service.MyFileService;
-import bDrawingBoard.module.main.vo.MyFileInfoVO;
+import bDrawingBoard.module.myfile.dao.MyFileDAO;
+import bDrawingBoard.module.myfile.service.MyFileService;
+import bDrawingBoard.module.myfile.vo.MyFileInfoVO;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

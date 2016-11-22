@@ -17,7 +17,6 @@ require.config({
         GradientAction: 'action/GradientAction',
         Util: 'util/Util',
         Figure: 'model/Figure',
-        Member: 'model/Member',
         Tool: 'model/Tool',
         Pen: 'model/Pen',
         bootstrap: 'lib/bootstrap',
@@ -32,7 +31,7 @@ require(['jquery', 'bootstrap', 'bootstrap_select', 'Initializer', 'LoginHandler
             var loginHandler = new LoginHandler();
             loginHandler.setHandler();
 
-            if(location.pathname == '/') {
+            if(location.pathname == '/' || location.pathname == '/login.do') {
                 if(localStorage.saveid != undefined) {
                     $('#saveId').attr('checked', true);
                     $('input[name=member_id]').val(localStorage.saveid);

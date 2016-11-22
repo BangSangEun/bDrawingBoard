@@ -1,4 +1,4 @@
-package bDrawingBoard.module.main.vo;
+package bDrawingBoard.module.myfile.vo;
 
 /**
  * 내 파일 정보 VO

@@ -26,6 +26,11 @@ public class LoginController {
         return "login";
     }
 
+    @RequestMapping("/main.do")
+    public String redirectMain() {
+        return "main";
+    }
+
     /**
      * 로그인 정보 확인
      * @param memberVO

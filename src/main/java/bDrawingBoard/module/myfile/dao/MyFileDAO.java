@@ -1,6 +1,6 @@
-package bDrawingBoard.module.main.dao;
+package bDrawingBoard.module.myfile.dao;
 
-import bDrawingBoard.module.main.vo.MyFileInfoVO;
+import bDrawingBoard.module.myfile.vo.MyFileInfoVO;
 
 import java.util.ArrayList;
 

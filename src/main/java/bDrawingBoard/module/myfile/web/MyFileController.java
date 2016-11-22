@@ -1,11 +1,10 @@
-package bDrawingBoard.module.main.web;
+package bDrawingBoard.module.myfile.web;
 
 import bDrawingBoard.module.login.vo.MemberVO;
-import bDrawingBoard.module.main.service.MyFileService;
-import bDrawingBoard.module.main.vo.MyFileInfoVO;
+import bDrawingBoard.module.myfile.service.MyFileService;
+import bDrawingBoard.module.myfile.vo.MyFileInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 

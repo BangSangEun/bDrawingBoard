@@ -1,13 +1,12 @@
-package bDrawingBoard.module.main.dao.daoImpl;
+package bDrawingBoard.module.myfile.dao.daoImpl;
 
-import bDrawingBoard.module.main.dao.MyFileDAO;
-import bDrawingBoard.module.main.vo.MyFileInfoVO;
+import bDrawingBoard.module.myfile.dao.MyFileDAO;
+import bDrawingBoard.module.myfile.vo.MyFileInfoVO;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by user on 2016-10-16.

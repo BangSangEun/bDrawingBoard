@@ -1,6 +1,6 @@
-package bDrawingBoard.module.main.service;
+package bDrawingBoard.module.myfile.service;
 
-import bDrawingBoard.module.main.vo.MyFileInfoVO;
+import bDrawingBoard.module.myfile.vo.MyFileInfoVO;
 
 /**
  * Created by user on 2016-10-16.

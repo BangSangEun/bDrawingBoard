@@ -3,7 +3,7 @@
 		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="bDrawingBoard.module.main.dao.MyFileDAO">
+<mapper namespace="bDrawingBoard.module.myfile.dao.MyFileDAO">
 
 	<select id="getFileList" parameterType="String" resultType="MyFileInfoVO">
 		/* 내 파일 목록 조회 */
