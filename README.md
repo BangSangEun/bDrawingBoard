@@ -4,7 +4,7 @@ Web Drawing Board 프로젝트는 웹 그림판 형태를 목표로 구현한 �
 Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장하고 불러오는 기능들이 구현되어 있습니다. <br/>
 누구든 이 프로젝트를 확장하여 더 풍부한 웹 그림판 기능을 가질 수 있도록 참여해주셔도 좋습니다. :blush: :sparkles:<br/>
 
-[![email](https://img.shields.io/badge/email-sebang@hancom.com-blue.svg)](mailto:sebang@hancom.com)
+[![email](https://img.shields.io/badge/email-sebang@hancom.com-blue.svg)](mailto:bsangeun61@gmail.com)
 
 <br/>
 > # 화면
@@ -187,27 +187,27 @@ SPEC에 명시된 기능들의 상세 내용 입니다.
 
 ### 로그인 시나리오
 
-![java_diagram_login](http://i.imgur.com/aZbg93H.png)
+![java_diagram_login](http://i.imgur.com/JhMo6FN.png)
 
 <br/>
 ### 도형 그리기 기능 시나리오
 
-![java_diagram_draw_1](http://i.imgur.com/j0MN63a.png)
+![java_diagram_draw_1](http://i.imgur.com/Bas3ekw.png)
 
 <br/>
 ### 채우기(그라데이션) 기능 시나리오
 
-![java_diagram_draw_2](http://i.imgur.com/4eYVBWg.png)
+![java_diagram_draw_2](http://i.imgur.com/F6HVwMz.png)
 
 <br/>
 ### 파일 저장 기능 시나리오
 
-![java_diagram_file_1](http://i.imgur.com/RtUtInZ.png)
+![java_diagram_file_1](http://i.imgur.com/q7jpjcl.png)
 
 <br/>
 ### 파일 목록 보기 기능 시나리오
 
-![java_diagram_file_2](http://i.imgur.com/DS5DFX3.png)
+![java_diagram_file_2](http://i.imgur.com/f4l6pmA.png)
 
 <br/>
 > # 버전 관리
