@@ -4,7 +4,7 @@ Web Drawing Board 프로젝트는 웹 그림판 형태를 목표로 구현한 �
 Spring과 Javascript를 사용하며 그리기 기능과 그림 파일을 저장하고 불러오는 기능들이 구현되어 있습니다. <br/>
 누구든 이 프로젝트를 확장하여 더 풍부한 웹 그림판 기능을 가질 수 있도록 참여해주셔도 좋습니다. :blush: :sparkles:<br/>
 
-[![email](https://img.shields.io/badge/email-sebang@hancom.com-blue.svg)](mailto:bsangeun61@gmail.com)
+[![email](https://img.shields.io/badge/email-bsangeun61@gmail.com-blue.svg)](mailto:bsangeun61@gmail.com)
 
 <br/>
 > # 화면
